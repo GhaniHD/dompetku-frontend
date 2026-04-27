@@ -28,7 +28,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Wrapper: ProtectedRoute + AppLayout digabung agar tidak nested berulang
 function ProtectedLayout() {
   return (
     <ProtectedRoute>
