@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { path: '/wallets',      label: 'Dompet',    icon: IconWallet      },
   { path: '/categories',   label: 'Kategori',  icon: IconCategory    },
   { path: '/budget',       label: 'Anggaran',  icon: IconBudget      },
-  { path: '/analysis',     label: 'Analisis',  icon: IconAnalysis    },
+  { path: '/analysis', label: 'Analisis', icon: IconAnalysis },
   { path: '/reports',      label: 'Laporan',   icon: IconReport      },
 ];
 

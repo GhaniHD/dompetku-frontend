@@ -16,6 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/profile/ProfilePage';
 import CategoriesPage from './pages/categories/CategoriesPage';
 import WalletPage from './pages/wallet/WalletPage';
+import OtherPage from './pages/more/OtherPage';
 import ReportsPage from './pages/reports/ReportsPage';
 
 const queryClient = new QueryClient({
@@ -61,7 +62,8 @@ function App() {
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/reports" element = {<ReportsPage/>} />
-              <Route path="/analysis" element = {<AnalysisPage/>} />
+              <Route path="/analysis" element={<AnalysisPage />} />
+              <Route path="/more" element={<OtherPage />} />
             </Route>
 
             {/* ── Redirect & fallback ── */}
