@@ -6,8 +6,8 @@ import ProtectedRoute   from './components/ProtectedRoute';
 import PublicRoute      from './components/PublicRoute';
 import AppLayout        from './components/layout/AppLayout';
 
-import LoginPage        from './pages/auth/loginPage';
-import RegisterPage     from './pages/auth/registerPage';
+import LoginPage    from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage    from './pages/dashboard/DashboardPage';
 import TransactionsPage from './pages/transactions/TransactionsPage';
 import AnalysisPage from './pages/analysis/AnalysisPage'
