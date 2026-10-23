@@ -70,7 +70,7 @@ function Body({ onClose, preset = {} }) {
         </div>
         <Field label="Ke">{(id) => <WalletSelect id={id} value={form.to} onChange={set('to')} exclude={form.from} placeholder="Pilih dompet tujuan" />}</Field>
         <Field label="Nominal">{(id) => <MoneyInput id={id} value={form.amount} onChange={set('amount')} placeholder="0" />}</Field>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Biaya admin" hint="Dicatat sebagai pengeluaran dompet asal.">
             {(id) => <MoneyInput id={id} value={form.fee} onChange={set('fee')} placeholder="0" />}
           </Field>

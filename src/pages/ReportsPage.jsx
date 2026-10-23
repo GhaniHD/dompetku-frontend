@@ -18,7 +18,7 @@ function Totals({ data }) {
     ['Selisih', data.net_balance, data.net_balance < 0 ? 'text-expense' : ''],
   ]
   return (
-    <section className="panel mb-5 grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+    <section className="panel mb-5 grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       {cells.map(([label, value, tone], i) => (
         <div key={label} className="px-6 py-5">
           <p className="text-[13px] text-muted">{label}</p>
@@ -36,10 +36,10 @@ function CategoryPanels({ data }) {
   const expense = toItems(data.expense_by_category)
   const income = toItems(data.income_by_category)
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <Panel title="Pengeluaran per kategori">
         {expense.length ? (
-          <div className="grid items-center gap-6 sm:grid-cols-[200px_1fr]">
+          <div className="grid grid-cols-1 items-center gap-6 sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-1 xl:grid-cols-[200px_minmax(0,1fr)]">
             <DonutChart items={expense} total={data.total_expense} label="Keluar" />
             <Legend2 items={expense} total={data.total_expense} />
           </div>
@@ -49,7 +49,7 @@ function CategoryPanels({ data }) {
       </Panel>
       <Panel title="Pemasukan per kategori">
         {income.length ? (
-          <div className="grid items-center gap-6 sm:grid-cols-[200px_1fr]">
+          <div className="grid grid-cols-1 items-center gap-6 sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-1 xl:grid-cols-[200px_minmax(0,1fr)]">
             <DonutChart items={income} total={data.total_income} label="Masuk" />
             <Legend2 items={income} total={data.total_income} />
           </div>
@@ -140,7 +140,7 @@ function Yearly() {
       ) : (
         <div className={cn('transition-opacity', report.isFetching && 'opacity-60')}>
           <Totals data={data} />
-          <div className="mb-5 grid gap-5 lg:grid-cols-[1.5fr_1fr]">
+          <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-[1.5fr_1fr]">
             <Panel title="Per bulan">
               <CashflowChart labels={months.map((m) => MONTHS_SHORT[m.month - 1])} income={months.map((m) => m.income)} expense={months.map((m) => m.expense)} />
             </Panel>

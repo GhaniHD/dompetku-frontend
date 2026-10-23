@@ -68,16 +68,16 @@ function TopBar({ onLogout }) {
           <Logo className="size-9" />
           <span className="font-display text-lg font-semibold">DompetKu</span>
         </Link>
-        <span className="hidden font-display text-xl font-semibold lg:block">DompetKu</span>
+        <span className="hidden font-display text-xl font-semibold xl:block">DompetKu</span>
 
-        <nav className="ml-4 hidden items-center gap-1 rounded-full border border-line bg-surface p-1 lg:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-line bg-surface p-1 lg:flex xl:ml-4">
           {PRIMARY_NAV.map(({ to, label, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                cn('rounded-full px-4 py-2 text-sm font-semibold transition-colors', isActive ? 'bg-ink text-canvas' : 'text-muted hover:text-ink')
+                cn('whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold transition-colors xl:px-4', isActive ? 'bg-ink text-canvas' : 'text-muted hover:text-ink')
               }
             >
               {label}
@@ -86,16 +86,17 @@ function TopBar({ onLogout }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <Button size="sm" icon={Plus} className="hidden lg:inline-flex" onClick={() => quick.openTransaction()}>
+          <Button size="sm" icon={Plus} className="hidden xl:inline-flex" onClick={() => quick.openTransaction()}>
             Catat transaksi
           </Button>
+          <IconButton icon={Plus} label="Catat transaksi" onClick={() => quick.openTransaction()} className="hidden bg-violet text-white hover:bg-violet-deep hover:text-white lg:inline-flex xl:hidden" />
           <NotificationBell />
           <Popover
             className="w-60 p-1.5"
             trigger={({ toggle }) => (
-              <button type="button" onClick={toggle} className="flex items-center gap-2.5 rounded-full p-1 pr-1 hover:bg-sunken sm:pr-3" aria-label="Menu akun">
+              <button type="button" onClick={toggle} className="flex items-center gap-2.5 rounded-full p-1 pr-1 hover:bg-sunken sm:pr-3 lg:pr-1 xl:pr-3" aria-label="Menu akun">
                 <Avatar name={name} src={profile?.avatar_url} />
-                <span className="hidden max-w-[140px] truncate text-sm font-semibold sm:block">{name}</span>
+                <span className="hidden max-w-[140px] truncate text-sm font-semibold sm:block lg:hidden xl:block">{name}</span>
               </button>
             )}
           >

@@ -32,7 +32,7 @@ function CycleArt() {
 
 export default function AuthLayout({ title, subtitle, children, footer }) {
   return (
-    <div className="grid min-h-dvh lg:grid-cols-[1fr_minmax(0,560px)] xl:grid-cols-[1fr_620px]">
+    <div className="grid grid-cols-1 min-h-dvh lg:grid-cols-[1fr_minmax(0,560px)] xl:grid-cols-[1fr_620px]">
       <div className="flex flex-col px-6 py-8 sm:px-12">
         <Link to="/" className="flex items-center gap-2.5">
           <Logo className="size-10" />

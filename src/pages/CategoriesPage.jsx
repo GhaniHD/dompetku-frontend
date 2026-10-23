@@ -78,9 +78,9 @@ export default function CategoriesPage() {
       <PageHeader title="Kategori" description="Kelompokkan transaksi supaya laporan dan anggaran lebih jelas." />
       <ErrorNote error={cats.error} onRetry={cats.refetch} />
       {cats.isLoading ? (
-        <div className="grid gap-5 lg:grid-cols-2"><Skeleton className="h-80" /><Skeleton className="h-80" /></div>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2"><Skeleton className="h-80" /><Skeleton className="h-80" /></div>
       ) : (
-        <div className="grid items-start gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
           <Column type="expense" title="Pengeluaran" items={list.filter((c) => c.type === 'expense')} />
           <Column type="income" title="Pemasukan" items={list.filter((c) => c.type === 'income')} />
         </div>

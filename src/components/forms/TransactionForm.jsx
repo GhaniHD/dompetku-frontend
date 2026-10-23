@@ -42,7 +42,7 @@ function Fields({ initial, onSubmit, setError }) {
       <Field label="Nominal">{(id) => <MoneyInput id={id} value={form.amount} onChange={set('amount')} placeholder="0" />}</Field>
       <Field label="Dompet">{(id) => <WalletSelect id={id} value={form.wallet_id} onChange={set('wallet_id')} />}</Field>
       <Field label="Kategori">{(id) => <CategorySelect id={id} type={form.type} value={form.category_id} onChange={set('category_id')} />}</Field>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Tanggal">{(id) => <Input id={id} type="date" value={form.date} max={today()} onChange={(e) => set('date')(e.target.value)} required />}</Field>
         <Field label="Catatan">{(id) => <Input id={id} value={form.note} onChange={(e) => set('note')(e.target.value)} placeholder="Opsional" />}</Field>
       </div>

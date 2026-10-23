@@ -83,7 +83,7 @@ function DebtForm({ onClose, kind }) {
             Jangan ubah saldo dompet
           </button>
         )}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Tanggal">{(id) => <Input id={id} type="date" max={today()} value={form.date} onChange={(e) => set('date')(e.target.value)} />}</Field>
           <Field label="Jatuh tempo">{(id) => <Input id={id} type="date" min={form.date} value={form.due_date} onChange={(e) => set('due_date')(e.target.value)} />}</Field>
         </div>
@@ -153,7 +153,7 @@ function DebtDetail({ id, onClose }) {
 
           {edit ? (
             <form onSubmit={(e) => { e.preventDefault(); update.mutate({ counterparty: edit.counterparty.trim(), note: edit.note, due_date: edit.due_date ? dayToISO(edit.due_date) : undefined }) }} className="space-y-3 rounded-2xl bg-sunken p-4">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="Nama">{(fid) => <Input id={fid} value={edit.counterparty} onChange={(e) => setEdit({ ...edit, counterparty: e.target.value })} />}</Field>
                 <Field label="Jatuh tempo">{(fid) => <Input id={fid} type="date" value={edit.due_date} onChange={(e) => setEdit({ ...edit, due_date: e.target.value })} />}</Field>
               </div>
@@ -167,7 +167,7 @@ function DebtDetail({ id, onClose }) {
             d.status !== 'paid' && (
               <form onSubmit={submitPay} className="space-y-3 rounded-2xl bg-sunken p-4">
                 <p className="font-semibold">{c.payTitle}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Field label="Nominal">{(fid) => <MoneyInput id={fid} value={pay.amount} onChange={(v) => setPay({ ...pay, amount: v })} placeholder={groupThousands(Math.round(d.remaining))} />}</Field>
                   <Field label={c.payWallet}>{(fid) => <WalletSelect id={fid} value={pay.wallet_id} onChange={(v) => setPay({ ...pay, wallet_id: v })} placeholder="Tidak ada" />}</Field>
                   <Field label="Tanggal">{(fid) => <Input id={fid} type="date" max={today()} value={pay.date} onChange={(e) => setPay({ ...pay, date: e.target.value })} />}</Field>
@@ -227,7 +227,7 @@ export default function DebtsPage() {
     <div>
       <PageHeader title="Hutang & piutang" description="Uang yang kamu pinjam dan yang dipinjam orang lain." actions={<Button icon={Plus} onClick={() => setCreating(true)}>{COPY[kind].new}</Button>} />
 
-      <section className="panel mb-5 grid divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+      <section className="panel mb-5 grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
         <div className="px-6 py-5">
           <p className="text-[13px] text-muted">Total hutang saya</p>
           {all.isLoading ? <Skeleton className="mt-2 h-8 w-40" /> : <p className="num mt-1 text-[26px] font-semibold text-expense">{rupiah(all.data?.total_payable || 0)}</p>}
@@ -254,7 +254,7 @@ export default function DebtsPage() {
           </Empty>
         </section>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((d) => (
             <button key={d.id} type="button" onClick={() => setOpenId(d.id)} className="panel flex flex-col p-5 text-left transition-colors hover:border-violet/40">
               <div className="flex items-start justify-between gap-3">

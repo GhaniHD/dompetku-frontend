@@ -90,7 +90,7 @@ export default function GoalsPage() {
       <PageHeader title="Target tabungan" description="Satu target, satu dompet. Saldo dompet itu adalah progresnya." actions={<Button icon={Plus} onClick={() => setForm({})}>Target baru</Button>} />
       <ErrorNote error={goals.error} onRetry={goals.refetch} />
       {goals.isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2"><Skeleton className="h-56" /><Skeleton className="h-56" /></div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2"><Skeleton className="h-56" /><Skeleton className="h-56" /></div>
       ) : list.length === 0 ? (
         <section className="panel">
           <Empty icon={Target} title="Belum ada target" action={<Button icon={Plus} onClick={() => setForm({})}>Target baru</Button>}>
@@ -98,7 +98,7 @@ export default function GoalsPage() {
           </Empty>
         </section>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((g) => (
             <article key={g.id} className={cn('panel flex flex-col p-5', g.achieved && 'border-income/40')}>
               <div className="flex items-start gap-4">

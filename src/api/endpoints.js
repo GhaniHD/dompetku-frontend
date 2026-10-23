@@ -26,6 +26,7 @@ export const walletApi = {
   update: (id, body) => put(`/wallets/${id}`, body),
   remove: (id) => del(`/wallets/${id}`),
   adjust: (id, body) => post(`/wallets/${id}/adjust`, body),
+  openingIncome: (id, body) => post(`/wallets/${id}/opening-income`, body),
   adjustments: (id) => get(`/wallets/${id}/adjustments`),
   history: (id, params) => get(`/wallets/${id}/history`, params),
 }

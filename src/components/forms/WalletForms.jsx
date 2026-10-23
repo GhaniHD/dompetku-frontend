@@ -5,6 +5,7 @@ import { dayToISO, parseAmount, rupiah, today } from '../../lib/format'
 import { WALLET_TYPES } from '../../lib/walletTypes'
 import { cn } from '../../lib/cn'
 import { Button, Field, Input, Modal, MoneyInput } from '../ui'
+import { CategorySelect } from './pickers'
 import { useFeedback } from '../ui/feedback'
 
 export function WalletForm(props) {
@@ -16,19 +17,38 @@ function WalletBody({ onClose, wallet }) {
   const [name, setName] = useState(wallet?.name || '')
   const [type, setType] = useState(wallet?.type || 'cash')
   const [balance, setBalance] = useState('')
+  const [asIncome, setAsIncome] = useState(false)
+  const [incomeCategory, setIncomeCategory] = useState('')
   const [error, setError] = useState('')
 
-  const save = useAction((body) => (wallet ? walletApi.update(wallet.id, body) : walletApi.create(body)), {
-    onSuccess: () => {
-      toast(wallet ? 'Dompet diperbarui' : 'Dompet dibuat')
-      onClose()
+  const save = useAction(
+    async (body) => {
+      if (wallet) return walletApi.update(wallet.id, body)
+      const created = await walletApi.create(body)
+      if (canBeIncome && asIncome) {
+        try {
+          await walletApi.openingIncome(created.id, { category_id: incomeCategory })
+        } catch (e) {
+          throw new Error(`Dompet dibuat, tapi saldo awal gagal dicatat sebagai pemasukan: ${e.message}`)
+        }
+      }
+      return created
     },
-    onError: (e) => setError(e.message),
-  })
+    {
+      onSuccess: () => {
+        toast(wallet ? 'Dompet diperbarui' : asIncome && canBeIncome ? 'Dompet dibuat, saldo awal tercatat sebagai pemasukan' : 'Dompet dibuat')
+        onClose()
+      },
+      onError: (e) => setError(e.message),
+    }
+  )
+
+  const canBeIncome = !wallet && type !== 'credit_card' && parseAmount(balance) > 0
 
   const submit = (e) => {
     e.preventDefault()
     if (!name.trim()) return setError('Isi nama dompet.')
+    if (canBeIncome && asIncome && !incomeCategory) return setError('Pilih kategori pemasukan untuk saldo awal.')
     const body = { name: name.trim(), type }
     if (!wallet) body.balance = parseAmount(balance)
     save.mutate(body)
@@ -75,6 +95,24 @@ function WalletBody({ onClose, wallet }) {
           >
             {(id) => <MoneyInput id={id} value={balance} onChange={setBalance} allowNegative={type === 'credit_card'} placeholder="0" />}
           </Field>
+        )}
+        {canBeIncome && (
+          <div className="rounded-2xl bg-sunken p-4">
+            <label className="flex cursor-pointer gap-3">
+              <input type="checkbox" checked={asIncome} onChange={(e) => setAsIncome(e.target.checked)} className="mt-1 size-4 shrink-0 accent-[rgb(var(--violet))]" />
+              <span>
+                <span className="block text-sm font-semibold">Hitung sebagai pemasukan</span>
+                <span className="block text-[13px] text-muted">
+                  Centang kalau uang ini baru kamu terima, misalnya gaji. Kalau ini uang yang sudah lama ada, biarkan sebagai saldo awal supaya laporan pemasukan tidak membengkak.
+                </span>
+              </span>
+            </label>
+            {asIncome && (
+              <div className="mt-3">
+                <Field label="Kategori pemasukan">{(id) => <CategorySelect id={id} type="income" value={incomeCategory} onChange={setIncomeCategory} />}</Field>
+              </div>
+            )}
+          </div>
         )}
         {wallet && <p className="rounded-xl bg-sunken px-3.5 py-2.5 text-sm text-muted">Untuk mengubah saldo, pakai Sesuaikan saldo agar selisihnya tercatat.</p>}
         {error && <p className="rounded-xl bg-expense-soft px-3.5 py-2.5 text-sm text-expense">{error}</p>}
@@ -145,12 +183,50 @@ function AdjustBody({ onClose, wallet }) {
             Selisih {rupiah(diff, { sign: true })}
           </p>
         )}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Tanggal">{(id) => <Input id={id} type="date" max={today()} value={date} onChange={(e) => setDate(e.target.value)} />}</Field>
           <Field label="Alasan">{(id) => <Input id={id} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Mis. lupa catat parkir" />}</Field>
         </div>
         {error && <p className="rounded-xl bg-expense-soft px-3.5 py-2.5 text-sm text-expense">{error}</p>}
       </form>
+    </Modal>
+  )
+}
+
+export function OpeningIncomeForm({ open, onClose, wallet, amount }) {
+  return open ? <OpeningIncomeBody onClose={onClose} wallet={wallet} amount={amount} /> : null
+}
+
+function OpeningIncomeBody({ onClose, wallet, amount }) {
+  const { toast } = useFeedback()
+  const [categoryId, setCategoryId] = useState('')
+  const [error, setError] = useState('')
+  const save = useAction(() => walletApi.openingIncome(wallet.id, { category_id: categoryId }), {
+    onSuccess: () => {
+      toast('Saldo awal tercatat sebagai pemasukan')
+      onClose()
+    },
+    onError: (e) => setError(e.message),
+  })
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title="Catat saldo awal sebagai pemasukan"
+      description={`${rupiah(amount)} akan menjadi transaksi pemasukan di ${wallet.name}, bertanggal saat dompet mulai dipakai. Saldo dompet tidak berubah.`}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>Batal</Button>
+          <Button loading={save.isPending} disabled={!categoryId} onClick={() => save.mutate()}>Catat sebagai pemasukan</Button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <Field label="Kategori pemasukan">{(id) => <CategorySelect id={id} type="income" value={categoryId} onChange={setCategoryId} />}</Field>
+        <p className="text-[13px] text-muted">Pemasukan ini akan ikut terhitung di laporan, ringkasan periode, dan analisis pada bulan tanggal tersebut.</p>
+        {error && <p className="rounded-xl bg-expense-soft px-3.5 py-2.5 text-sm text-expense">{error}</p>}
+      </div>
     </Modal>
   )
 }

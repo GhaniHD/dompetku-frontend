@@ -127,7 +127,7 @@ function PasswordPanel() {
         className="space-y-4"
       >
         <Field label="Password sekarang">{(id) => <PasswordInput id={id} autoComplete="current-password" value={form.old} onChange={set('old')} required />}</Field>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Password baru">{(id) => <PasswordInput id={id} autoComplete="new-password" value={form.next} onChange={set('next')} required />}</Field>
           <Field label="Ulangi password baru">{(id) => <PasswordInput id={id} autoComplete="new-password" value={form.confirm} onChange={set('confirm')} required />}</Field>
         </div>
@@ -178,7 +178,7 @@ export default function ProfilePage() {
       <PageHeader title="Profil & pengaturan" />
       <ErrorNote error={profile.error} onRetry={profile.refetch} />
       {!p ? (
-        <div className="grid gap-5 lg:grid-cols-2"><Skeleton className="h-96" /><Skeleton className="h-96" /></div>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2"><Skeleton className="h-96" /><Skeleton className="h-96" /></div>
       ) : (
         <>
           <section className="panel mb-5 grid grid-cols-3 divide-x divide-line">
@@ -193,7 +193,7 @@ export default function ProfilePage() {
               </div>
             ))}
           </section>
-          <div className="grid items-start gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
             <div className="space-y-5">
               <AccountPanel key={p.id + p.name + p.email} profile={p} />
               <PasswordPanel />

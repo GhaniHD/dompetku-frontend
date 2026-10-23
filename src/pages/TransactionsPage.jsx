@@ -135,7 +135,7 @@ export default function TransactionsPage() {
           value={tab}
           onChange={setTab}
           options={[
-            { value: 'tx', label: 'Pemasukan & pengeluaran' },
+            { value: 'tx', label: 'Masuk & keluar' },
             { value: 'transfer', label: 'Pindahan' },
           ]}
         />
@@ -147,7 +147,7 @@ export default function TransactionsPage() {
       <section className="panel overflow-hidden">
         {tab === 'tx' ? (
           <>
-            <div className="grid gap-3 border-b border-line p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <div className="grid grid-cols-1 gap-3 border-b border-line p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-faint" />
                 <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari catatan, kategori, dompet" className="pl-10" aria-label="Cari transaksi" />

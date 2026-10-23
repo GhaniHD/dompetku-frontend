@@ -67,14 +67,14 @@ function RecurringForm({ onClose, rule }) {
         <Field label="Dompet">{(id) => <WalletSelect id={id} value={form.wallet_id} onChange={set('wallet_id')} />}</Field>
         <Field label="Kategori">{(id) => <CategorySelect id={id} type={form.type} value={form.category_id} onChange={set('category_id')} />}</Field>
         {!rule && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Ulangi">
               {() => <Segmented className="w-full" value={form.frequency} onChange={set('frequency')} options={[{ value: 'monthly', label: 'Bulanan' }, { value: 'weekly', label: 'Mingguan' }]} />}
             </Field>
             <Field label="Mulai">{(id) => <Input id={id} type="date" value={form.start_date} onChange={(e) => set('start_date')(e.target.value)} />}</Field>
           </div>
         )}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Berakhir" hint="Kosongkan bila tanpa batas.">{(id) => <Input id={id} type="date" value={form.end_date} min={form.start_date} onChange={(e) => set('end_date')(e.target.value)} />}</Field>
           <Field label="Catatan">{(id) => <Input id={id} value={form.note} onChange={(e) => set('note')(e.target.value)} placeholder="Mis. Gaji kantor" />}</Field>
         </div>
@@ -111,7 +111,7 @@ export default function RecurringPage() {
       <PageHeader title="Transaksi rutin" description="Dicatat otomatis setiap jatuh tempo. Jadwal yang terlewat ikut dicatat saat server berjalan lagi." actions={<Button icon={Plus} onClick={() => setForm({})}>Jadwal baru</Button>} />
 
       {list.length > 0 && (
-        <section className="panel mb-5 grid divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <section className="panel mb-5 grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
           <div className="px-6 py-5">
             <p className="text-[13px] text-muted">Pemasukan rutin per bulan</p>
             <p className="num mt-1 text-[26px] font-semibold text-income">{rupiah(monthly.income)}</p>

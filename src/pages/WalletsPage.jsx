@@ -127,7 +127,7 @@ export default function WalletsPage() {
         }
       />
 
-      <section className="panel mb-5 grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      <section className="panel mb-5 grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {[
           ['Total aset', assets, ''],
           ['Tagihan kartu kredit', debt, debt < 0 ? 'text-expense' : ''],
@@ -143,7 +143,7 @@ export default function WalletsPage() {
       <ErrorNote error={wallets.error} onRetry={wallets.refetch} />
 
       {wallets.isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[176px] rounded-[22px]" />)}</div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[176px] rounded-[22px]" />)}</div>
       ) : list.length === 0 ? (
         <section className="panel">
           <Empty icon={Wallet} title="Belum ada dompet" action={<Button icon={Plus} onClick={() => setParams({ baru: '1' })}>Tambah dompet</Button>}>
@@ -151,7 +151,7 @@ export default function WalletsPage() {
           </Empty>
         </section>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((w) => (
             <WalletCard
               key={w.id}

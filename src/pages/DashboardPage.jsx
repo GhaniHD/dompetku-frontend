@@ -23,10 +23,10 @@ function CycleHero({ total, cycle, loading }) {
   const quick = useQuick()
   return (
     <section className="relative overflow-hidden rounded-[26px] bg-violet p-6 text-white sm:p-7">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-col-reverse items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
+        <div className="min-w-0">
           <p className="text-sm text-white/70">Total saldo semua dompet</p>
-          {loading ? <Skeleton className="mt-2 h-11 w-56 bg-white/20" /> : <p className="num mt-1 text-[40px] font-semibold leading-none sm:text-[46px]">{rupiah(total)}</p>}
+          {loading ? <Skeleton className="mt-2 h-11 w-56 bg-white/20" /> : <p className="num mt-1 text-[34px] font-semibold leading-none min-[380px]:text-[40px] sm:text-[46px]">{rupiah(total)}</p>}
         </div>
         <Link to="/profil#siklus" className="whitespace-nowrap rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25">
           Gajian tgl {cycle.startDay}
@@ -187,7 +187,7 @@ export default function DashboardPage() {
 
       <ErrorNote error={wallets.error || report.error} onRetry={() => { wallets.refetch(); report.refetch() }} />
 
-      <div className="grid gap-5 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <CycleHero total={total} cycle={cycle} loading={wallets.isLoading} />
         </div>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         <Panel
           className="lg:col-span-7"
           title="Arus kas 6 bulan"
@@ -240,7 +240,7 @@ export default function DashboardPage() {
         </Panel>
       </div>
 
-      <div className="grid items-start gap-5 lg:grid-cols-12">
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
         <Panel className="lg:col-span-7" title="Transaksi terakhir" action={<Link to="/transaksi" className="text-sm font-semibold text-violet-ink hover:underline">Lihat semua</Link>}>
           {recent.isLoading ? (
             <div className="space-y-3">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-12" />)}</div>

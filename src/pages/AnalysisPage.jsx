@@ -80,7 +80,7 @@ export default function AnalysisPage() {
         </section>
       ) : (
         <div className="space-y-5">
-          <section className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+          <section className="grid grid-cols-1 gap-5 lg:grid-cols-[1.4fr_1fr]">
             <div className="rounded-[26px] bg-violet p-6 text-white sm:p-7">
               <div className="flex items-center gap-2">
                 <Sparkles className="size-5" />
@@ -123,7 +123,7 @@ export default function AnalysisPage() {
           >
             <TrendChart labels={labels} series={series} />
             {prediction.length > 0 && (
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {prediction.map((p) => (
                   <div key={p.label} className="rounded-2xl bg-sunken px-4 py-3">
                     <p className="text-[13px] font-semibold">{p.label}</p>
@@ -135,7 +135,7 @@ export default function AnalysisPage() {
             )}
           </Panel>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
             <Panel title="Saran">
               {insight.recommendations?.length ? (
                 <ol className="space-y-3">
@@ -170,7 +170,7 @@ export default function AnalysisPage() {
                   })}
                 </ul>
               ) : (
-                <div className="grid items-center gap-6 sm:grid-cols-[180px_1fr]">
+                <div className="grid grid-cols-1 items-center gap-6 sm:grid-cols-[180px_minmax(0,1fr)] lg:grid-cols-1 xl:grid-cols-[180px_minmax(0,1fr)]">
                   <DonutChart items={expenseItems} total={data.total_expense} size={180} label="Keluar" />
                   <Legend2 items={expenseItems} total={data.total_expense} />
                 </div>
