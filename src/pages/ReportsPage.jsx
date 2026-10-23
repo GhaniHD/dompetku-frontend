@@ -1,14 +1,13 @@
 import { useState } from 'react'
-import { BarChart3, ChevronLeft, ChevronRight, Download } from 'lucide-react'
-import { exportApi } from '../api/endpoints'
+import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react'
+import DownloadMenu from '../components/DownloadMenu'
 import { CashflowChart, DonutChart, Legend2 } from '../components/charts'
 import MonthNav from '../components/MonthNav'
 import { Button, Empty, ErrorNote, PageHeader, Panel, Segmented, Skeleton } from '../components/ui'
-import { useFeedback } from '../components/ui/feedback'
 import { useMonthlyReport, useProfile, useYearlyReport } from '../hooks/queries'
 import { periodOf } from '../lib/cycle'
 import { cn } from '../lib/cn'
-import { MONTHS, MONTHS_SHORT, dateLabel, dayEndISO, dayStartISO, parseYmd, rupiah, ymd } from '../lib/format'
+import { MONTHS, MONTHS_SHORT, dateLabel, parseYmd, rupiah, ymd } from '../lib/format'
 
 const toItems = (rows = []) => rows.map((r) => ({ name: r.category_name, total: r.total, count: r.transaction_count }))
 
@@ -63,7 +62,6 @@ function CategoryPanels({ data }) {
 }
 
 function Monthly({ startDay }) {
-  const { toast } = useFeedback()
   const [picked, setPicked] = useState(null)
   const [mode, setMode] = useState(startDay === 1 ? 'calendar' : 'cycle')
   const now = new Date()
@@ -71,22 +69,6 @@ function Monthly({ startDay }) {
   const month = picked || { month: current.month, year: current.year }
   const report = useMonthlyReport(month.month, month.year, mode)
   const data = report.data
-  const [exporting, setExporting] = useState(false)
-
-  const doExport = async () => {
-    setExporting(true)
-    try {
-      await exportApi.transactions(
-        { start_date: dayStartISO(data.period_start), end_date: dayEndISO(data.period_end) },
-        `dompetku-laporan-${data.period_start}_${data.period_end}.csv`
-      )
-    } catch (e) {
-      toast(e.message, 'error')
-    } finally {
-      setExporting(false)
-    }
-  }
-
   const days = []
   if (data) {
     const byDate = new Map((data.daily_totals || []).map((d) => [d.date.slice(0, 10), d]))
@@ -112,9 +94,9 @@ function Monthly({ startDay }) {
           />
         )}
         {data && <span className="text-sm text-muted">{dateLabel(data.period_start)} – {dateLabel(data.period_end)}</span>}
-        <Button variant="outline" size="sm" icon={Download} className="ml-auto" loading={exporting} disabled={!data} onClick={doExport}>
-          Unduh CSV
-        </Button>
+        <div className="ml-auto">
+          <DownloadMenu size="sm" start={data?.period_start} end={data?.period_end} />
+        </div>
       </div>
       <ErrorNote error={report.error} onRetry={report.refetch} />
       {report.isLoading || !data ? (
@@ -142,10 +124,15 @@ function Yearly() {
 
   return (
     <>
-      <div className="mb-5 inline-flex items-center rounded-full border border-line bg-surface p-1">
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+      <div className="inline-flex items-center rounded-full border border-line bg-surface p-1">
         <button type="button" aria-label="Tahun sebelumnya" onClick={() => setYear((y) => y - 1)} className="grid size-9 place-items-center rounded-full text-muted hover:bg-sunken hover:text-ink"><ChevronLeft className="size-4" /></button>
         <span className="min-w-[80px] text-center text-sm font-semibold">{year}</span>
         <button type="button" aria-label="Tahun berikutnya" onClick={() => setYear((y) => y + 1)} className="grid size-9 place-items-center rounded-full text-muted hover:bg-sunken hover:text-ink"><ChevronRight className="size-4" /></button>
+      </div>
+        <div className="ml-auto">
+          <DownloadMenu size="sm" start={`${year}-01-01`} end={`${year}-12-31`} />
+        </div>
       </div>
       <ErrorNote error={report.error} onRetry={report.refetch} />
       {report.isLoading || !data ? (

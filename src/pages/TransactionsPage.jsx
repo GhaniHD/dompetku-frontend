@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { ArrowLeftRight, ArrowRight, Download, Plus, Receipt, Search, Trash2 } from 'lucide-react'
-import { exportApi, transferApi } from '../api/endpoints'
+import { ArrowLeftRight, ArrowRight, Plus, Receipt, Search, Trash2 } from 'lucide-react'
+import { transferApi } from '../api/endpoints'
+import DownloadMenu from '../components/DownloadMenu'
 import { useQuick } from '../components/layout/QuickActions'
 import MonthNav from '../components/MonthNav'
 import { TransactionRow } from '../components/finance'
@@ -81,7 +82,6 @@ function TransfersList({ params }) {
 
 export default function TransactionsPage() {
   const quick = useQuick()
-  const { toast } = useFeedback()
   const startDay = useProfile().data?.budget_start_day || 1
   const [tab, setTab] = useState('tx')
   const [picked, setMonth] = useState(null)
@@ -92,7 +92,6 @@ export default function TransactionsPage() {
   const [categoryId, setCategoryId] = useState('')
   const [q, setQ] = useState('')
   const [limit, setLimit] = useState(PAGE)
-  const [exporting, setExporting] = useState(false)
 
   const period = periodFor(startDay, month.year, month.month)
   const range = { start_date: dayStartISO(period.startYmd), end_date: dayEndISO(period.endYmd) }
@@ -113,18 +112,6 @@ export default function TransactionsPage() {
   const navLabel =
     startDay === 1 ? undefined : `${dateLabel(period.start, { day: 'numeric', month: 'short' })} – ${dateLabel(period.end, { day: 'numeric', month: 'short', year: 'numeric' })}`
 
-  const doExport = async () => {
-    setExporting(true)
-    try {
-      const name = `dompetku-${tab === 'tx' ? 'transaksi' : 'transfer'}-${period.startYmd}_${period.endYmd}.csv`
-      await (tab === 'tx' ? exportApi.transactions(range, name) : exportApi.transfers(range, name))
-    } catch (e) {
-      toast(e.message, 'error')
-    } finally {
-      setExporting(false)
-    }
-  }
-
   return (
     <div>
       <PageHeader
@@ -132,9 +119,7 @@ export default function TransactionsPage() {
         description="Semua uang masuk, keluar, dan pindahan antar dompet."
         actions={
           <>
-            <Button variant="outline" icon={Download} loading={exporting} onClick={doExport}>
-              Unduh CSV
-            </Button>
+            <DownloadMenu start={period.startYmd} end={period.endYmd} />
             <Button variant="outline" icon={ArrowLeftRight} onClick={() => quick.openTransfer()}>
               Pindahkan uang
             </Button>

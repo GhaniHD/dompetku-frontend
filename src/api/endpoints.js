@@ -102,6 +102,7 @@ export const goalApi = {
 }
 
 export const exportApi = {
+  report: (start, end, name) => download('/export/report.xlsx', { start, end }, name),
   transactions: (params, name) => download('/export/transactions.csv', params, name),
   transfers: (params, name) => download('/export/transfers.csv', params, name),
 }
