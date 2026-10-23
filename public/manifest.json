@@ -4,8 +4,8 @@
   "description": "Aplikasi keuangan pribadi",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6366f1",
+  "background_color": "#F2F1F7",
+  "theme_color": "#6A3DE8",
   "orientation": "portrait",
   "icons": [
     {

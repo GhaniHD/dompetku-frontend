@@ -1,97 +1,120 @@
-@import "./transactions.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ══════════════════════════════════════════════════════════════════════
-   GLOBAL STYLES
-   ══════════════════════════════════════════════════════════════════════ */
-
-/* Hilangkan tap highlight di mobile */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Prevent overscroll bounce di iOS */
-body {
-  overscroll-behavior: none;
-}
-
-/* Safe area untuk iPhone dengan notch */
-.app-root {
-  padding-top: env(safe-area-inset-top);
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   ANIMATIONS
-   ══════════════════════════════════════════════════════════════════════ */
-
-/* Animasi fade-in */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+@layer base {
+  :root {
+    --canvas: 242 241 247;
+    --surface: 255 255 255;
+    --sunken: 247 246 251;
+    --ink: 29 25 49;
+    --muted: 107 102 128;
+    --faint: 160 156 178;
+    --line: 232 229 240;
+    --violet: 106 61 232;
+    --violet-deep: 76 37 184;
+    --violet-soft: 240 235 254;
+    --violet-ink: 88 48 205;
+    --income: 15 157 107;
+    --income-soft: 227 246 238;
+    --expense: 224 72 78;
+    --expense-soft: 253 234 235;
+    --caution: 196 128 8;
+    --caution-soft: 252 243 222;
+    color-scheme: light;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .dark {
+    --canvas: 17 15 26;
+    --surface: 27 24 39;
+    --sunken: 34 31 49;
+    --ink: 240 238 248;
+    --muted: 166 161 188;
+    --faint: 116 111 140;
+    --line: 46 42 64;
+    --violet: 118 82 234;
+    --violet-deep: 98 58 214;
+    --violet-soft: 43 34 77;
+    --violet-ink: 182 160 255;
+    --income: 52 199 140;
+    --income-soft: 22 52 42;
+    --expense: 246 106 111;
+    --expense-soft: 64 28 33;
+    --caution: 236 176 64;
+    --caution-soft: 60 46 18;
+    color-scheme: dark;
   }
-}
 
-.fade-in {
-  animation: fadeIn 0.3s ease forwards;
-  opacity: 0;
-}
-
-/* Pulse skeleton loading */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
+  html {
+    -webkit-tap-highlight-color: transparent;
   }
-  50% {
-    opacity: 0.4;
+
+  body {
+    @apply bg-canvas font-sans text-[15px] leading-relaxed text-ink antialiased;
   }
-}
 
-.animate-pulse {
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+  h1, h2, h3 {
+    @apply font-display tracking-[-0.01em];
+  }
 
-/* Spinner loading */
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid #ddd;
-  border-top: 3px solid #6366f1;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+  :focus-visible {
+    @apply outline-none ring-2 ring-violet ring-offset-2 ring-offset-canvas;
+  }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  input[type='date']::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+  }
+
+  .dark input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(1);
   }
 }
 
-/* Slide in from bottom */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+@layer components {
+  .panel {
+    @apply rounded-panel border border-line bg-surface;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .num {
+    @apply font-display tabular-nums tracking-[-0.02em];
+  }
+
+  .field {
+    @apply h-11 w-full rounded-xl border border-line bg-surface px-3.5 text-[15px] text-ink placeholder:text-faint transition-colors focus:border-violet focus:outline-none focus:ring-4 focus:ring-violet/15 disabled:opacity-60;
   }
 }
 
-.slide-up {
-  animation: slideUp 0.4s ease forwards;
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fill {
+  from { transform: scaleX(0); }
+}
+
+.animate-rise { animation: rise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.animate-fade { animation: fade 0.2s ease both; }
+.animate-fill { animation: fill 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; transform-origin: left; }

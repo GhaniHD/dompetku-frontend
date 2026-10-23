@@ -1,15 +1,41 @@
-const CACHE_NAME = 'dompetku-v1';
+const CACHE_NAME = 'dompetku-v2';
 
-self.addEventListener('install', (e) => {
+self.addEventListener('install', () => self.skipWaiting());
+
+self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) =>
-      cache.addAll(['/', '/index.html'])
-    )
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
-  );
+  const { request } = e;
+  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+
+  if (request.mode === 'navigate') {
+    e.respondWith(
+      fetch(request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put('/index.html', copy));
+          return res;
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  if (request.url.includes('/assets/')) {
+    e.respondWith(
+      caches.match(request).then((hit) =>
+        hit || fetch(request).then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(request, copy));
+          return res;
+        })
+      )
+    );
+  }
 });

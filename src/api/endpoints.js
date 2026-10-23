@@ -1,0 +1,107 @@
+import { get, post, put, patch, del, http, download } from './client'
+
+export const authApi = {
+  login: (body) => post('/auth/login', body),
+  register: (body) => post('/auth/register', body),
+}
+
+export const profileApi = {
+  get: () => get('/profile'),
+  update: (body) => put('/profile', body),
+  changePassword: (body) => put('/profile/password', body),
+  updateCycle: (startDay) => put('/profile/budget-cycle', { start_day: startDay }),
+  uploadAvatar: (file) => {
+    const form = new FormData()
+    form.append('avatar', file)
+    return http.post('/profile/avatar', form).then((r) => r.data.data)
+  },
+  remove: () => del('/profile'),
+}
+
+export const walletApi = {
+  list: (includeArchived) => get('/wallets', { include_archived: includeArchived ? 'true' : undefined }),
+  get: (id) => get(`/wallets/${id}`),
+  total: () => get('/wallets/total-balance'),
+  create: (body) => post('/wallets', body),
+  update: (id, body) => put(`/wallets/${id}`, body),
+  remove: (id) => del(`/wallets/${id}`),
+  adjust: (id, body) => post(`/wallets/${id}/adjust`, body),
+  adjustments: (id) => get(`/wallets/${id}/adjustments`),
+  history: (id, params) => get(`/wallets/${id}/history`, params),
+}
+
+export const categoryApi = {
+  list: (type) => get('/categories', { type }),
+  create: (body) => post('/categories', body),
+  update: (id, body) => put(`/categories/${id}`, body),
+  remove: (id) => del(`/categories/${id}`),
+}
+
+export const transactionApi = {
+  list: (params) => get('/transactions', params),
+  get: (id) => get(`/transactions/${id}`),
+  create: (body) => post('/transactions', body),
+  update: (id, body) => put(`/transactions/${id}`, body),
+  remove: (id) => del(`/transactions/${id}`),
+}
+
+export const transferApi = {
+  list: (params) => get('/transfers', params),
+  create: (body) => post('/transfers', body),
+  remove: (id) => del(`/transfers/${id}`),
+}
+
+export const budgetApi = {
+  list: (month, year) => get('/budgets', { month, year }),
+  current: () => get('/budgets/current'),
+  create: (body) => post('/budgets', body),
+  update: (id, body) => put(`/budgets/${id}`, body),
+  remove: (id) => del(`/budgets/${id}`),
+  copy: (body) => post('/budgets/copy', body),
+}
+
+export const reportApi = {
+  monthly: (month, year, period) => get('/reports', { month, year, period }),
+  yearly: (year) => get('/reports/yearly', { year }),
+}
+
+export const analysisApi = {
+  get: (year) => get('/analysis', { year }),
+}
+
+export const notificationApi = {
+  list: (page = 1, limit = 20) => get('/notifications', { page, limit }),
+  read: (id) => patch(`/notifications/${id}/read`),
+  readAll: () => patch('/notifications/read-all'),
+  remove: (id) => del(`/notifications/${id}`),
+  clear: () => del('/notifications/clear'),
+}
+
+export const recurringApi = {
+  list: () => get('/recurring'),
+  create: (body) => post('/recurring', body),
+  update: (id, body) => put(`/recurring/${id}`, body),
+  remove: (id) => del(`/recurring/${id}`),
+}
+
+export const debtApi = {
+  list: (params) => get('/debts', params),
+  get: (id) => get(`/debts/${id}`),
+  create: (body) => post('/debts', body),
+  update: (id, body) => put(`/debts/${id}`, body),
+  remove: (id) => del(`/debts/${id}`),
+  pay: (id, body) => post(`/debts/${id}/payments`, body),
+  removePayment: (id, paymentId) => del(`/debts/${id}/payments/${paymentId}`),
+}
+
+export const goalApi = {
+  list: () => get('/goals'),
+  create: (body) => post('/goals', body),
+  update: (id, body) => put(`/goals/${id}`, body),
+  remove: (id) => del(`/goals/${id}`),
+}
+
+export const exportApi = {
+  transactions: (params, name) => download('/export/transactions.csv', params, name),
+  transfers: (params, name) => download('/export/transfers.csv', params, name),
+}
