@@ -21,12 +21,13 @@ const SIZE = {
 }
 
 export const Button = forwardRef(function Button(
-  { variant = 'primary', size = 'md', loading, icon: Icon, className, children, disabled, ...props },
+  { variant = 'primary', size = 'md', loading, icon: Icon, className, children, disabled, type = 'button', ...props },
   ref
 ) {
   return (
     <button
       ref={ref}
+      type={type}
       disabled={disabled || loading}
       className={cn(
         'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full font-semibold transition-colors disabled:cursor-not-allowed',
@@ -144,10 +145,15 @@ export function Segmented({ options, value, onChange, className, size = 'md' }) 
 
 export function Modal({ open, onClose, title, description, children, footer, wide }) {
   const panel = useRef(null)
+  const closeRef = useRef(onClose)
+
+  useEffect(() => {
+    closeRef.current = onClose
+  })
 
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => e.key === 'Escape' && onClose?.()
+    const onKey = (e) => e.key === 'Escape' && closeRef.current?.()
     document.addEventListener('keydown', onKey)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -157,7 +163,7 @@ export function Modal({ open, onClose, title, description, children, footer, wid
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prev
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 

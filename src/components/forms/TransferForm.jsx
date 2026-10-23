@@ -64,7 +64,7 @@ function Body({ onClose, preset = {} }) {
       }
     >
       <form id="transfer-form" onSubmit={submit} className="space-y-4">
-        <Field label="Dari">{(id) => <WalletSelect id={id} value={form.from} onChange={set('from')} placeholder="Pilih dompet asal" />}</Field>
+        <Field label="Dari">{(id) => <WalletSelect id={id} value={form.from} onChange={set('from')} exclude={form.to} placeholder="Pilih dompet asal" />}</Field>
         <div className="-my-1 flex justify-center text-faint">
           <ArrowDown className="size-5" />
         </div>

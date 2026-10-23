@@ -64,9 +64,10 @@ function CategoryPanels({ data }) {
 
 function Monthly({ startDay }) {
   const { toast } = useFeedback()
-  const current = periodOf(startDay)
   const [picked, setPicked] = useState(null)
   const [mode, setMode] = useState(startDay === 1 ? 'calendar' : 'cycle')
+  const now = new Date()
+  const current = mode === 'cycle' ? periodOf(startDay) : { month: now.getMonth() + 1, year: now.getFullYear() }
   const month = picked || { month: current.month, year: current.year }
   const report = useMonthlyReport(month.month, month.year, mode)
   const data = report.data
@@ -103,7 +104,7 @@ function Monthly({ startDay }) {
           <Segmented
             size="sm"
             value={mode}
-            onChange={setMode}
+            onChange={(m) => { setMode(m); setPicked(null) }}
             options={[
               { value: 'cycle', label: 'Periode gajian' },
               { value: 'calendar', label: 'Tanggal 1–akhir' },

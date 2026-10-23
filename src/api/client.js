@@ -44,8 +44,9 @@ http.interceptors.response.use(
   (res) => res,
   (error) => {
     const status = error.response?.status
-    const isAuthCall = error.config?.url?.startsWith('/auth/')
-    if (status === 401 && !isAuthCall) {
+    const url = error.config?.url || ''
+    const isCredentialCheck = url.startsWith('/auth/') || url === '/profile/password'
+    if (status === 401 && !isCredentialCheck) {
       session.clear()
       if (!location.pathname.startsWith('/masuk')) location.assign('/masuk')
     }
