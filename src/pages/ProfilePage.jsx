@@ -7,10 +7,10 @@ import { Button, ErrorNote, Field, Input, PageHeader, Panel, Skeleton } from '..
 import { useFeedback } from '../components/ui/feedback'
 import { useAuth } from '../context/auth'
 import { useAction, useProfile } from '../hooks/queries'
-import { periodOf } from '../lib/cycle'
 import { cn } from '../lib/cn'
 import { dateLabel, rupiah } from '../lib/format'
 import { PasswordInput } from './auth/LoginPage'
+import IncomeForm from '../components/forms/IncomeForm'
 
 function AccountPanel({ profile }) {
   const { toast } = useFeedback()
@@ -70,37 +70,12 @@ function AccountPanel({ profile }) {
   )
 }
 
-function CyclePanel({ profile }) {
-  const { toast } = useFeedback()
-  const [day, setDay] = useState(profile.budget_start_day || 1)
-  const save = useAction(profileApi.updateCycle, { onSuccess: () => toast('Tanggal gajian disimpan'), onError: (e) => toast(e.message, 'error') })
-  const p = periodOf(day)
-
+function IncomePanel({ profile }) {
   return (
-    <Panel title="Tanggal gajian" className="scroll-mt-24" >
+    <Panel title="Pemasukan & periode" className="scroll-mt-24">
       <div id="siklus" />
-      <p className="mb-4 text-sm text-muted">Anggaran dan ringkasan periode dihitung mulai tanggal ini sampai sehari sebelum gajian berikutnya.</p>
-      <div className="grid grid-cols-7 gap-1.5 sm:grid-cols-[repeat(16,minmax(0,1fr))]" role="radiogroup" aria-label="Tanggal gajian">
-        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-          <button
-            key={d}
-            type="button"
-            role="radio"
-            aria-checked={d === day}
-            onClick={() => setDay(d)}
-            className={cn('num aspect-square rounded-xl text-sm font-semibold transition-colors', d === day ? 'bg-violet text-white' : 'bg-sunken text-muted hover:bg-violet-soft hover:text-violet-ink')}
-          >
-            {d}
-          </button>
-        ))}
-      </div>
-      <p className="mt-4 rounded-2xl bg-sunken px-4 py-3 text-sm">
-        Periode berjalan: <span className="font-semibold">{dateLabel(p.start)}</span> sampai <span className="font-semibold">{dateLabel(p.end)}</span>
-        {day > 28 && <span className="block text-muted">Di bulan yang lebih pendek, periode dimulai di hari terakhir bulan itu.</span>}
-      </p>
-      <div className="mt-4 flex justify-end">
-        <Button disabled={day === profile.budget_start_day} loading={save.isPending} onClick={() => save.mutate(day)}>Simpan tanggal gajian</Button>
-      </div>
+      <p className="mb-4 text-sm text-muted">Menentukan cara anggaran, ringkasan periode, dan jatah harian dihitung.</p>
+      <IncomeForm profile={profile} />
     </Panel>
   )
 }
@@ -207,7 +182,7 @@ export default function ProfilePage() {
               <PasswordPanel />
             </div>
             <div className="space-y-5">
-              <CyclePanel key={p.budget_start_day} profile={p} />
+              <IncomePanel key={`${p.income_type}-${p.budget_start_day}`} profile={p} />
               <DangerPanel />
             </div>
           </div>

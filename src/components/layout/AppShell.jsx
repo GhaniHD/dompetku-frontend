@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { LogOut, Moon, MoreHorizontal, Plus, Settings, ShieldCheck, Sun, UserRound } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useTheme } from '../../context/theme'
 import { useAdminSummary, useProfile } from '../../hooks/queries'
 import { cn } from '../../lib/cn'
-import { Button, IconButton } from '../ui'
+import { Button, IconButton, Modal } from '../ui'
+import IncomeForm from '../forms/IncomeForm'
 import Avatar from './Avatar'
 import Logo from './Logo'
 import NotificationBell from './NotificationBell'
@@ -178,6 +180,17 @@ function BottomNav() {
   )
 }
 
+function IncomeSetup() {
+  const { data } = useProfile()
+  const [later, setLater] = useState(false)
+  if (!data || data.income_setup_done || later) return null
+  return (
+    <Modal open onClose={() => setLater(true)} title="Bagaimana kamu menerima pemasukan?" description="Supaya periode anggaran dan jatah harian sesuai. Bisa diubah kapan saja di Profil.">
+      <IncomeForm profile={data} submitLabel="Mulai pakai DompetKu" />
+    </Modal>
+  )
+}
+
 export default function AppShell() {
   const { logout } = useAuth()
   const navigate = useNavigate()
@@ -195,6 +208,7 @@ export default function AppShell() {
           <Outlet />
         </main>
         <BottomNav />
+        <IncomeSetup />
       </div>
     </QuickActionsProvider>
   )
