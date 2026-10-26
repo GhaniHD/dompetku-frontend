@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useId, useRef } from 'react'
+import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Loader2, X } from 'lucide-react'
 import { cn } from '../../lib/cn'
+import { evaluate, isExpression } from '../../lib/calc'
 import { groupThousands, rupiah } from '../../lib/format'
 
 const BUTTON = {
@@ -99,20 +100,103 @@ export function Textarea({ className, ...props }) {
   return <textarea className={cn('field h-auto min-h-[84px] resize-y py-2.5', className)} {...props} />
 }
 
-export function MoneyInput({ value, onChange, allowNegative, className, ...props }) {
+const QUICK_KEYS = [
+  ['+', '+'],
+  ['−', '-'],
+  ['×', '×'],
+  ['÷', '÷'],
+  ['rb', 'rb'],
+  ['jt', 'jt'],
+]
+
+// MoneyInput menerima angka biasa ("15.000") atau hitungan ("15rb+12,5rb").
+// Hasil hitungan tampil di bawah dan menggantikan teks saat input ditinggalkan.
+export function MoneyInput({ value, onChange, allowNegative, className, calculator = true, quickKeys = true, ...props }) {
+  const ref = useRef(null)
+  const caret = useRef(null)
+  const [focused, setFocused] = useState(false)
+  const raw = String(value ?? '')
+
+  useLayoutEffect(() => {
+    if (caret.current == null || !ref.current) return
+    ref.current.setSelectionRange(caret.current, caret.current)
+    caret.current = null
+  }, [raw])
+  const expr = calculator && isExpression(raw)
+  const result = expr ? evaluate(raw) : NaN
+
+  const handle = (text) => {
+    const plain = /^-?[\d.]*$/.test(text.trim())
+    if (plain || !calculator) {
+      const digits = text.replace(/[^\d]/g, '')
+      const neg = allowNegative && text.trim().startsWith('-')
+      onChange(neg ? (digits ? '-' + digits : '-') : digits)
+      return
+    }
+    onChange(text.replace(/[^\d.,+\-*/x×÷:()\s a-z]/gi, ''))
+  }
+
+  const commit = () => {
+    // Ditunda agar tata letak tidak bergeser di tengah ketukan pada elemen di bawahnya.
+    const done = expr && !Number.isNaN(result) && (allowNegative || result >= 0) ? String(result) : null
+    setTimeout(() => {
+      setFocused(false)
+      if (done !== null) onChange(done)
+    }, 200)
+  }
+
+  const insert = (token) => {
+    const el = ref.current
+    const start = el?.selectionStart ?? raw.length
+    const end = el?.selectionEnd ?? raw.length
+    const display = expr ? raw : groupThousands(raw)
+    const next = display.slice(0, start) + token + display.slice(end)
+    caret.current = start + token.length
+    handle(next)
+  }
+
   return (
-    <div className="relative">
-      <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] font-semibold text-faint">Rp</span>
-      <input
-        inputMode={allowNegative ? 'text' : 'numeric'}
-        className={cn('field num pl-10 text-[17px] font-semibold', className)}
-        value={groupThousands(value)}
-        onChange={(e) => {
-          const raw = allowNegative ? e.target.value : e.target.value.replace('-', '')
-          onChange(raw.trim() === '-' ? '-' : raw.replace(/[^\d-]/g, ''))
-        }}
-        {...props}
-      />
+    <div>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] font-semibold text-faint">Rp</span>
+        <input
+          ref={ref}
+          inputMode="decimal"
+          autoComplete="off"
+          className={cn('field num pl-10 text-[17px] font-semibold', className)}
+          value={expr ? raw : groupThousands(raw)}
+          onChange={(e) => handle(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && expr) {
+              if (!Number.isNaN(result)) onChange(String(result))
+            }
+          }}
+          {...props}
+        />
+      </div>
+      {calculator && expr && (
+        <p className={cn('mt-1.5 text-[13px] font-semibold', Number.isNaN(result) ? 'text-faint' : 'text-violet-ink')}>
+          {Number.isNaN(result) ? 'Hitungan belum lengkap' : `= ${rupiah(result)}`}
+        </p>
+      )}
+      {calculator && quickKeys && focused && (
+        <div className="mt-2 flex gap-1.5" aria-label="Tombol kalkulator">
+          {QUICK_KEYS.map(([label, token]) => (
+            <button
+              key={label}
+              type="button"
+              tabIndex={-1}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => insert(token)}
+              className="h-8 flex-1 rounded-lg bg-sunken text-sm font-semibold text-muted hover:bg-violet-soft hover:text-violet-ink"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

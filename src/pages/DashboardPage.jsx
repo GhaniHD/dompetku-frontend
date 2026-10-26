@@ -90,9 +90,12 @@ function PeriodStats({ report, budgets, loading }) {
     },
   ]
   return (
-    <section className="panel grid grid-cols-2 overflow-hidden">
+    <section className="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
       {cells.map((c, i) => (
-        <div key={c.label} className={cn('flex flex-col p-5 sm:p-6', i % 2 === 0 && 'border-r border-line', i < 2 && 'border-b border-line')}>
+        <div
+          key={c.label}
+          className={cn('flex flex-col p-5 sm:p-6', i % 2 === 0 && 'border-r border-line', i < 2 && 'border-b border-line lg:border-b-0', i === 1 && 'lg:border-r')}
+        >
           <p className="text-[13px] text-muted">{c.label}</p>
           {loading ? (
             <Skeleton className="mt-3 h-8 w-3/4" />
@@ -106,6 +109,89 @@ function PeriodStats({ report, budgets, loading }) {
           )}
         </div>
       ))}
+    </section>
+  )
+}
+
+function isToday(value) {
+  const d = new Date(value)
+  const n = new Date()
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate()
+}
+
+function TodayCard({ transactions, budgets, wallets, cycle, loading }) {
+  const quick = useQuick()
+  const todays = transactions.filter((t) => t.type === 'expense' && isToday(t.date))
+  const spent = todays.reduce((s, t) => s + t.amount, 0)
+  const days = Math.max(1, cycle.daysLeft)
+
+  let allowance = null
+  let basis = ''
+  if (budgets?.total_budget > 0) {
+    const budgeted = new Set(budgets.budgets.map((b) => b.category.name))
+    const spentBudgeted = todays.filter((t) => budgeted.has(t.category_name)).reduce((s, t) => s + t.amount, 0)
+    allowance = Math.max(0, budgets.total_remain + spentBudgeted) / days
+    basis = `Sisa anggaran dibagi ${days} hari sampai ${cycle.startDay === 1 ? 'akhir bulan' : 'gajian'}`
+  } else if (wallets.length) {
+    const spendable = wallets.filter((w) => ['cash', 'bank', 'ewallet'].includes(w.type) && w.balance > 0).reduce((s, w) => s + w.balance, 0)
+    allowance = (spendable + spent) / days
+    basis = `Saldo tunai, bank & dompet digital dibagi ${days} hari`
+  }
+
+  const pct = allowance ? (spent / allowance) * 100 : 0
+  const left = allowance != null ? allowance - spent : null
+  const tone = pct > 100 ? 'expense' : pct >= 80 ? 'caution' : 'violet'
+
+  return (
+    <section className="panel flex h-full flex-col p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-[17px] font-semibold">Hari ini</h2>
+          <p className="text-[13px] text-muted">{dateLabel(today(), { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+        </div>
+        <Button size="sm" variant="soft" icon={Plus} onClick={() => quick.openTransaction()}>Catat</Button>
+      </div>
+
+      {loading ? (
+        <Skeleton className="mt-5 h-24" />
+      ) : (
+        <>
+          <div className="mt-5">
+            <p className="text-[13px] text-muted">Sudah keluar</p>
+            <p className={cn('num text-[34px] font-semibold leading-tight', pct > 100 && 'text-expense')}>{rupiah(spent)}</p>
+            {allowance != null && (
+              <p className="text-sm text-muted">
+                dari jatah <span className="num font-semibold text-ink">{rupiah(allowance)}</span>
+              </p>
+            )}
+          </div>
+          {allowance != null && (
+            <>
+              <Progress value={pct} tone={tone} className="mt-3 h-2.5" />
+              <p className={cn('mt-2 text-sm font-semibold', left < 0 ? 'text-expense' : 'text-ink')}>
+                {left < 0 ? `Lewat ${rupiah(-left)} dari jatah hari ini` : `Masih bisa pakai ${rupiah(left)} hari ini`}
+              </p>
+              <p className="text-xs text-faint">{basis}</p>
+            </>
+          )}
+          <ul className="mt-4 space-y-1.5 border-t border-line pt-3">
+            {todays.length === 0 && <li className="text-sm text-muted">Belum ada pengeluaran hari ini.</li>}
+            {todays.slice(0, 3).map((t) => (
+              <li key={t.id}>
+                <button type="button" onClick={() => quick.openTransaction({ editId: t.id })} className="flex w-full items-center justify-between gap-3 rounded-lg text-left text-sm hover:text-violet-ink">
+                  <span className="min-w-0 truncate">{t.note || t.category_name}</span>
+                  <span className="num shrink-0 font-semibold">{rupiah(t.amount)}</span>
+                </button>
+              </li>
+            ))}
+            {todays.length > 3 && (
+              <li>
+                <Link to="/transaksi" className="text-[13px] font-semibold text-violet-ink hover:underline">+{todays.length - 3} transaksi lain</Link>
+              </li>
+            )}
+          </ul>
+        </>
+      )}
     </section>
   )
 }
@@ -192,9 +278,11 @@ export default function DashboardPage() {
           <CycleHero total={total} cycle={cycle} loading={wallets.isLoading} />
         </div>
         <div className="lg:col-span-5">
-          <PeriodStats report={report.data} budgets={budgets.data} loading={report.isLoading} />
+          <TodayCard transactions={recent.data || []} budgets={budgets.data} wallets={wallets.data || []} cycle={cycle} loading={recent.isLoading || wallets.isLoading} />
         </div>
       </div>
+
+      <PeriodStats report={report.data} budgets={budgets.data} loading={report.isLoading} />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         <Panel
