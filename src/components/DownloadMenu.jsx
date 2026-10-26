@@ -26,23 +26,26 @@ export default function DownloadMenu({ start, end, size = 'md', className }) {
 
   const items = [
     {
-      icon: FileSpreadsheet,
       label: 'Laporan Excel lengkap',
       hint: 'Ringkasan, transaksi, mutasi dompet, kategori, harian, anggaran, hutang, target',
       fn: () => exportApi.report(start, end, `dompetku-laporan_${suffix}.xlsx`),
+      primary: true,
     },
     {
-      icon: FileText,
-      label: 'Transaksi saja (CSV)',
-      hint: 'Data mentah untuk diimpor ke aplikasi lain',
-      fn: () => exportApi.transactions(range, `dompetku-transaksi_${suffix}.csv`),
+      label: 'Transaksi saja (Excel)',
+      hint: 'Satu tabel rapi dengan filter dan total yang ikut filter',
+      fn: () => exportApi.transactionsXlsx(start, end, `dompetku-transaksi_${suffix}.xlsx`),
     },
     {
-      icon: FileText,
-      label: 'Pindahan saja (CSV)',
+      label: 'Pindahan saja (Excel)',
       hint: 'Pindahan antar dompet beserta biaya admin',
-      fn: () => exportApi.transfers(range, `dompetku-pindahan_${suffix}.csv`),
+      fn: () => exportApi.transfersXlsx(start, end, `dompetku-pindahan_${suffix}.xlsx`),
     },
+  ]
+
+  const raw = [
+    { label: 'Transaksi', fn: () => exportApi.transactions(range, `dompetku-transaksi_${suffix}.csv`) },
+    { label: 'Pindahan', fn: () => exportApi.transfers(range, `dompetku-pindahan_${suffix}.csv`) },
   ]
 
   return (
@@ -56,15 +59,15 @@ export default function DownloadMenu({ start, end, size = 'md', className }) {
     >
       {(close) => (
         <div>
-          {items.map(({ icon: Icon, label, hint, fn }, i) => (
+          {items.map(({ label, hint, fn, primary }) => (
             <button
               key={label}
               type="button"
               onClick={() => run(fn, close)}
               className="flex w-full gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-sunken"
             >
-              <span className={`mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg ${i === 0 ? 'bg-income-soft text-income' : 'bg-sunken text-muted'}`}>
-                <Icon className="size-4" />
+              <span className={`mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg ${primary ? 'bg-income-soft text-income' : 'bg-sunken text-muted'}`}>
+                <FileSpreadsheet className="size-4" />
               </span>
               <span>
                 <span className="block text-sm font-semibold">{label}</span>
@@ -72,6 +75,16 @@ export default function DownloadMenu({ start, end, size = 'md', className }) {
               </span>
             </button>
           ))}
+          <div className="mx-3 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line pb-1.5 pt-2.5 text-xs text-muted">
+            <span className="flex items-center gap-1.5">
+              <FileText className="size-3.5" /> CSV mentah:
+            </span>
+            {raw.map(({ label, fn }) => (
+              <button key={label} type="button" onClick={() => run(fn, close)} className="font-semibold text-violet-ink hover:underline">
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </Popover>

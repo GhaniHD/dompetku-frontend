@@ -156,7 +156,7 @@ function DangerPanel() {
   })
   return (
     <Panel title="Hapus akun">
-      <p className="text-sm text-muted">Akun dan akses ke semua data keuanganmu akan dihapus. Unduh CSV transaksi dulu bila ingin menyimpan arsip.</p>
+      <p className="text-sm text-muted">Akun dan akses ke semua data keuanganmu akan dihapus. Unduh laporan Excel dulu dari menu Laporan bila ingin menyimpan arsip.</p>
       <div className="mt-4 flex justify-end">
         <Button
           variant="danger-soft"

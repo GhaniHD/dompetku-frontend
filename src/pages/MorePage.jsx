@@ -7,7 +7,7 @@ import { useTheme } from '../context/theme'
 
 const ITEMS = [
   { to: '/anggaran', label: 'Anggaran', icon: PieChart, hint: 'Batas pengeluaran per periode gajian' },
-  { to: '/laporan', label: 'Laporan', icon: BarChart3, hint: 'Bulanan dan tahunan, unduh CSV' },
+  { to: '/laporan', label: 'Laporan', icon: BarChart3, hint: 'Bulanan dan tahunan, unduh Excel' },
   ...SECONDARY_NAV,
   { to: '/notifikasi', label: 'Notifikasi', icon: Bell, hint: 'Semua pemberitahuan' },
   { to: '/profil', label: 'Profil & pengaturan', icon: Settings, hint: 'Akun, tanggal gajian, password' },
