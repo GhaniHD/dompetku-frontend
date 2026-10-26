@@ -7,6 +7,7 @@ import AppShell from './components/layout/AppShell'
 import { Skeleton } from './components/ui'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
+import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import DashboardPage from './pages/DashboardPage'
 
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
@@ -23,6 +24,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const MorePage = lazy(() => import('./pages/MorePage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const AdminPage = lazy(() => import('./pages/admin/AdminPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +80,7 @@ export default function App() {
                   <Route path="/masuk" element={<LoginPage />} />
                   <Route path="/daftar" element={<RegisterPage />} />
                 </Route>
+                <Route path="/atur-ulang-password" element={<ResetPasswordPage />} />
 
                 <Route element={<RequireAuth />}>
                   <Route element={<AppShell />}>
@@ -95,6 +98,7 @@ export default function App() {
                     <Route path="profil" element={<ProfilePage />} />
                     <Route path="notifikasi" element={<NotificationsPage />} />
                     <Route path="lainnya" element={<MorePage />} />
+                    <Route path="admin" element={<AdminPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Route>
                 </Route>

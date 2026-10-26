@@ -66,7 +66,7 @@ export default function LoginPage() {
         <Button type="submit" size="lg" className="w-full" loading={loading}>
           Masuk
         </Button>
-        <p className="text-center text-xs text-faint">Server mungkin butuh hingga 30 detik untuk bangun saat pertama dibuka.</p>
+        <p className="text-center text-[13px] text-muted">Lupa password? Minta link atur ulang password ke admin.</p>
       </form>
     </AuthLayout>
   )

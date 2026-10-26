@@ -107,12 +107,20 @@ function CyclePanel({ profile }) {
 
 function PasswordPanel() {
   const { toast } = useFeedback()
+  const { replaceToken } = useAuth()
   const [form, setForm] = useState({ old: '', next: '', confirm: '' })
   const [error, setError] = useState('')
-  const save = useAction((b) => profileApi.changePassword(b), {
-    onSuccess: () => { setForm({ old: '', next: '', confirm: '' }); setError(''); toast('Password diganti') },
+  const save = useAction(
+    async (b) => {
+      const res = await profileApi.changePassword(b)
+      if (res?.token) replaceToken(res.token)
+      return res
+    },
+    {
+    onSuccess: () => { setForm({ old: '', next: '', confirm: '' }); setError(''); toast('Password diganti. Perangkat lain otomatis keluar.') },
     onError: (e) => setError(e.message),
-  })
+    }
+  )
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   return (
