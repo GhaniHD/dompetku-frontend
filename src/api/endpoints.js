@@ -3,6 +3,23 @@ import { get, post, put, patch, del, http, download } from './client'
 export const authApi = {
   login: (body) => post('/auth/login', body),
   register: (body) => post('/auth/register', body),
+  checkInvite: (code) => get(`/auth/invite/${encodeURIComponent(code)}`),
+  resetPassword: (body) => post('/auth/reset-password', body),
+}
+
+export const adminApi = {
+  summary: () => get('/admin/summary'),
+  users: (params) => get('/admin/users', params),
+  approve: (id) => post(`/admin/users/${id}/approve`),
+  reject: (id, reason) => post(`/admin/users/${id}/reject`, { reason }),
+  suspend: (id, reason) => post(`/admin/users/${id}/suspend`, { reason }),
+  activate: (id) => post(`/admin/users/${id}/activate`),
+  remove: (id) => del(`/admin/users/${id}`),
+  resetLink: (id) => post(`/admin/users/${id}/reset-link`),
+  invites: () => get('/admin/invites'),
+  createInvite: (body) => post('/admin/invites', body),
+  revokeInvite: (id) => del(`/admin/invites/${id}`),
+  logs: () => get('/admin/logs'),
 }
 
 export const profileApi = {

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  adminApi,
   analysisApi, budgetApi, categoryApi, debtApi, goalApi, notificationApi, profileApi,
   recurringApi, reportApi, transactionApi, transferApi, walletApi,
 } from '../api/endpoints'
@@ -47,6 +48,15 @@ export const useRecurring = () => useQuery({ queryKey: ['recurring'], queryFn: r
 export const useDebts = (params) => useQuery({ queryKey: ['debts', params], queryFn: () => debtApi.list(params) })
 
 export const useDebt = (id) => useQuery({ queryKey: ['debts', 'detail', id], queryFn: () => debtApi.get(id), enabled: !!id })
+
+export const useAdminSummary = () => useQuery({ queryKey: ['admin', 'summary'], queryFn: adminApi.summary, refetchInterval: 60_000 })
+
+export const useAdminUsers = (params) =>
+  useQuery({ queryKey: ['admin', 'users', params], queryFn: () => adminApi.users(params), select: list, placeholderData: (prev) => prev })
+
+export const useAdminInvites = () => useQuery({ queryKey: ['admin', 'invites'], queryFn: adminApi.invites, select: list })
+
+export const useAdminLogs = () => useQuery({ queryKey: ['admin', 'logs'], queryFn: adminApi.logs, select: list })
 
 export const useGoals = () => useQuery({ queryKey: ['goals'], queryFn: goalApi.list, select: list })
 

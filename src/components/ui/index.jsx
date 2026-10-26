@@ -131,7 +131,7 @@ export function Segmented({ options, value, onChange, className, size = 'md' }) 
             onClick={() => onChange(o.value)}
             className={cn(
               'flex-1 whitespace-nowrap rounded-full font-semibold transition-colors',
-              size === 'sm' ? 'px-3 py-1.5 text-[13px]' : 'px-4 py-2 text-sm',
+              size === 'sm' ? 'px-2 py-1.5 text-[13px] min-[360px]:px-3' : 'px-4 py-2 text-sm',
               active ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.08)]' : 'text-muted hover:text-ink'
             )}
           >
