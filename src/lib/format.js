@@ -1,3 +1,5 @@
+import { evaluate, isExpression } from './calc'
+
 const idr = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 })
 const compact = new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 })
 
@@ -76,8 +78,13 @@ export const isoToDay = (value) => {
 }
 
 export const parseAmount = (s) => {
-  const digits = String(s ?? '').replace(/[^\d-]/g, '')
-  return digits ? Number(digits) : 0
+  const raw = String(s ?? '').trim()
+  if (isExpression(raw)) {
+    const v = evaluate(raw)
+    return Number.isNaN(v) ? 0 : v
+  }
+  const digits = raw.replace(/[^\d-]/g, '')
+  return digits && digits !== '-' ? Number(digits) : 0
 }
 
 export const groupThousands = (s) => {
