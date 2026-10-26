@@ -47,9 +47,9 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
       </div>
       <aside className="relative hidden overflow-hidden bg-violet p-12 lg:flex lg:flex-col lg:justify-center">
         <div className="max-w-md">
-          <h2 className="text-[40px] font-semibold leading-[1.1] text-white">Anggaran yang ikut tanggal gajianmu.</h2>
+          <h2 className="text-[40px] font-semibold leading-[1.1] text-white">Anggaran yang ikut ritme pemasukanmu.</h2>
           <p className="mt-4 text-lg text-white/75">
-            Catat pemasukan, pengeluaran, dan pindahan antar dompet. Lihat sisa uang per periode gajian, bukan per tanggal 1.
+            Catat pemasukan, pengeluaran, dan pindahan antar dompet. Lihat sisa uang per periode gajian, atau per bulan kalau pemasukanmu tidak tetap.
           </p>
           <CycleArt />
         </div>

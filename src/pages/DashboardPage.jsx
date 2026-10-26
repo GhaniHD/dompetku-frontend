@@ -7,6 +7,7 @@ import { TransactionRow, WalletGlyph } from '../components/finance'
 import { Button, Empty, ErrorNote, Money, Panel, Progress, Skeleton } from '../components/ui'
 import { useCurrentBudgets, useDebts, useMonthlyReport, useProfile, useRecurring, useTransactions, useWallets, useYearlyReport } from '../hooks/queries'
 import { cycleProgress } from '../lib/cycle'
+import { periodWords } from '../lib/period'
 import { cn } from '../lib/cn'
 import { MONTHS_SHORT, dateLabel, dayStartISO, relativeDay, rupiah, today } from '../lib/format'
 import { walletType } from '../lib/walletTypes'
@@ -29,7 +30,7 @@ function CycleHero({ total, cycle, loading }) {
           {loading ? <Skeleton className="mt-2 h-11 w-56 bg-white/20" /> : <p className="num mt-1 text-[34px] font-semibold leading-none min-[380px]:text-[40px] sm:text-[46px]">{rupiah(total)}</p>}
         </div>
         <Link to="/profil#siklus" className="whitespace-nowrap rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/25">
-          Gajian tgl {cycle.startDay}
+          {cycle.words.badge}
         </Link>
       </div>
 
@@ -39,7 +40,7 @@ function CycleHero({ total, cycle, loading }) {
             Hari ke-{cycle.dayIndex} dari {cycle.length}
           </span>
           <span className="text-white/70">
-            {cycle.daysLeft === 1 ? 'Gajian besok' : `${cycle.daysLeft - 1} hari lagi gajian`}
+            {cycle.words.countdown(cycle.daysLeft)}
           </span>
         </div>
         <div className="mt-3 flex h-9 gap-[3px]" aria-hidden="true">
@@ -71,23 +72,50 @@ function CycleHero({ total, cycle, loading }) {
   )
 }
 
+function budgetCell(budgets) {
+  const free = budgets?.free_money
+  if (budgets?.total_budget) {
+    return {
+      label: 'Sisa anggaran',
+      value: budgets.total_remain,
+      tone: budgets.total_remain < 0 ? 'text-expense' : '',
+      foot: (
+        <>
+          <Progress value={(budgets.total_spent / budgets.total_budget) * 100} tone={budgets.total_spent > budgets.total_budget ? 'expense' : 'violet'} className="mt-3" />
+          {free && (
+            <Link to="/anggaran" className="mt-2 block text-xs text-muted hover:underline">
+              Uang bebas <span className={cn('num font-semibold', free.amount < 0 ? 'text-expense' : 'text-ink')}>{rupiah(free.amount)}</span>
+            </Link>
+          )}
+        </>
+      ),
+    }
+  }
+  if (free && budgets?.savings?.length) {
+    return {
+      label: 'Uang bebas',
+      value: free.amount,
+      tone: free.amount < 0 ? 'text-expense' : '',
+      foot: <Link to="/anggaran" className="mt-2 block text-xs font-semibold text-violet-ink hover:underline">Lihat rincian</Link>,
+    }
+  }
+  return {
+    label: 'Anggaran',
+    value: null,
+    foot: (
+      <Link to="/anggaran" className="mt-1 inline-block text-sm font-semibold text-violet-ink hover:underline">
+        Buat anggaran
+      </Link>
+    ),
+  }
+}
+
 function PeriodStats({ report, budgets, loading }) {
   const cells = [
     { label: 'Pemasukan periode ini', value: report?.total_income, tone: 'text-income' },
     { label: 'Pengeluaran periode ini', value: report?.total_expense, tone: '' },
     { label: 'Selisih', value: report?.net_balance, tone: report?.net_balance < 0 ? 'text-expense' : '' , sign: true },
-    {
-      label: budgets?.total_budget ? 'Sisa anggaran' : 'Anggaran',
-      value: budgets?.total_budget ? budgets.total_remain : null,
-      tone: budgets?.total_remain < 0 ? 'text-expense' : '',
-      foot: budgets?.total_budget ? (
-        <Progress value={(budgets.total_spent / budgets.total_budget) * 100} tone={budgets.total_spent > budgets.total_budget ? 'expense' : 'violet'} className="mt-3" />
-      ) : (
-        <Link to="/anggaran" className="mt-1 inline-block text-sm font-semibold text-violet-ink hover:underline">
-          Buat anggaran
-        </Link>
-      ),
-    },
+    budgetCell(budgets),
   ]
   return (
     <section className="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
@@ -131,11 +159,11 @@ function TodayCard({ transactions, budgets, wallets, cycle, loading }) {
     const budgeted = new Set(budgets.budgets.map((b) => b.category.name))
     const spentBudgeted = todays.filter((t) => budgeted.has(t.category_name)).reduce((s, t) => s + t.amount, 0)
     allowance = Math.max(0, budgets.total_remain + spentBudgeted) / days
-    basis = `Sisa anggaran dibagi ${days} hari sampai ${cycle.startDay === 1 ? 'akhir bulan' : 'gajian'}`
+    basis = `Sisa anggaran dibagi ${days} hari sampai ${cycle.words.until}`
   } else if (wallets.length) {
     const spendable = wallets.filter((w) => ['cash', 'bank', 'ewallet'].includes(w.type) && w.balance > 0).reduce((s, w) => s + w.balance, 0)
     allowance = (spendable + spent) / days
-    basis = `Saldo tunai, bank & dompet digital dibagi ${days} hari`
+    basis = `Saldo tunai, bank & dompet digital dibagi ${days} hari sampai ${cycle.words.until}`
   }
 
   const pct = allowance ? (spent / allowance) * 100 : 0
@@ -245,7 +273,7 @@ export default function DashboardPage() {
   const navigate = useNavigate()
   const profile = useProfile()
   const startDay = profile.data?.budget_start_day || 1
-  const cycle = { ...cycleProgress(startDay), startDay }
+  const cycle = { ...cycleProgress(startDay), startDay, words: periodWords(profile.data) }
   const wallets = useWallets()
   const budgets = useCurrentBudgets()
   const report = useMonthlyReport(cycle.month, cycle.year, 'cycle')

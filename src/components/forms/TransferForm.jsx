@@ -7,7 +7,7 @@ import { Button, Field, Input, Modal, MoneyInput } from '../ui'
 import { useFeedback } from '../ui/feedback'
 import { WalletSelect } from './pickers'
 
-const blank = (preset) => ({ from: preset.from || '', to: preset.to || '', amount: '', fee: '', date: today(), note: '' })
+const blank = (preset) => ({ from: preset.from || '', to: preset.to || '', amount: preset.amount ? String(preset.amount) : '', fee: '', date: today(), note: '' })
 
 export default function TransferForm(props) {
   return props.open ? <Body {...props} /> : null
