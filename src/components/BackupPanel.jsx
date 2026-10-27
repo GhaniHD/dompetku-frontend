@@ -157,7 +157,7 @@ function RestoreDialog({ onClose }) {
       open
       onClose={onClose}
       title="Pulihkan dari backup"
-      description={preview ? 'Periksa isi backup sebelum mengganti data.' : 'Pilih file backup DompetKu (.dpk) lalu masukkan password-nya.'}
+      description={preview ? 'Periksa isi backup sebelum mengganti data.' : 'Pilih file backup MyFulus (.dpk) lalu masukkan password-nya.'}
       footer={
         preview ? (
           <>

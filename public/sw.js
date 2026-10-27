@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dompetku-v2';
+const CACHE_NAME = 'myfulus-v1';
 
 self.addEventListener('install', () => self.skipWaiting());
 

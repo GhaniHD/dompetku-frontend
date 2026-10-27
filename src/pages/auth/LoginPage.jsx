@@ -48,7 +48,7 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Masuk ke DompetKu"
+      title="Masuk ke MyFulus"
       subtitle="Lanjutkan mencatat keuanganmu."
       footer={
         <>

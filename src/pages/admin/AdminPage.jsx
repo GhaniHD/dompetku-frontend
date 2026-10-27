@@ -340,7 +340,7 @@ function InvitesTab() {
         {invites.isLoading ? (
           <div className="p-6"><Skeleton className="h-32" /></div>
         ) : !invites.data?.length ? (
-          <Empty icon={Link2} title="Belum ada undangan">Buat undangan untuk orang yang ingin kamu ajak memakai DompetKu.</Empty>
+          <Empty icon={Link2} title="Belum ada undangan">Buat undangan untuk orang yang ingin kamu ajak memakai MyFulus.</Empty>
         ) : (
           <ul className="divide-y divide-line">
             {invites.data.map((inv) => (
@@ -432,7 +432,7 @@ export default function AdminPage() {
 
   return (
     <div>
-      <PageHeader title="Admin" description="Kelola siapa yang bisa memakai DompetKu. Admin tidak bisa melihat saldo atau isi transaksi pengguna." />
+      <PageHeader title="Admin" description="Kelola siapa yang bisa memakai MyFulus. Admin tidak bisa melihat saldo atau isi transaksi pengguna." />
       <SummaryStrip />
       <div className="mb-4">
         <Segmented size="sm" className="w-full sm:w-auto" value={tab} onChange={(v) => setParams({ tab: v })} options={TABS} />

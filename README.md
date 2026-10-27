@@ -1,6 +1,6 @@
-# DompetKu (frontend)
+# MyFulus (frontend)
 
-Frontend aplikasi pencatat keuangan pribadi DompetKu. React 19, Vite, Tailwind CSS 3, TanStack Query, Chart.js.
+Frontend aplikasi pencatat keuangan pribadi MyFulus (sebelumnya DompetKu). React 19, Vite, Tailwind CSS 3, TanStack Query, Chart.js.
 
 ## Menjalankan
 

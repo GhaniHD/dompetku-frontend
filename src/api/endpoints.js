@@ -23,7 +23,7 @@ export const adminApi = {
 }
 
 export const backupApi = {
-  export: (body) => downloadPost('/backup/export', body, 'dompetku-backup.dpk'),
+  export: (body) => downloadPost('/backup/export', body, 'myfulus-backup.dpk'),
   preview: (form) => postForm('/backup/preview', form),
   restore: (form) => postForm('/backup/restore', form),
 }

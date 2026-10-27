@@ -36,7 +36,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
       <div className="flex flex-col px-6 py-8 sm:px-12">
         <Link to="/" className="flex items-center gap-2.5">
           <Logo className="size-10" />
-          <span className="font-display text-xl font-semibold">DompetKu</span>
+          <span className="font-display text-xl font-semibold">MyFulus</span>
         </Link>
         <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-12">
           <h1 className="text-[34px] font-semibold leading-tight">{title}</h1>

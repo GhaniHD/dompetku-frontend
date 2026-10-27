@@ -61,7 +61,7 @@ function Rail({ onLogout }) {
   const isAdmin = useIsAdmin()
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[88px] flex-col items-center py-5 lg:flex">
-      <Link to="/" aria-label="DompetKu" className="mb-6">
+      <Link to="/" aria-label="MyFulus" className="mb-6">
         <Logo className="size-11" />
       </Link>
       <nav className="flex flex-col items-center gap-1.5 rounded-full border border-line bg-surface px-1.5 py-2">
@@ -91,9 +91,9 @@ function TopBar({ onLogout }) {
       <div className="mx-auto flex h-[72px] max-w-[1320px] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2.5 lg:hidden">
           <Logo className="size-9" />
-          <span className="font-display text-lg font-semibold">DompetKu</span>
+          <span className="font-display text-lg font-semibold">MyFulus</span>
         </Link>
-        <span className="hidden font-display text-xl font-semibold xl:block">DompetKu</span>
+        <span className="hidden font-display text-xl font-semibold xl:block">MyFulus</span>
 
         <nav className="hidden items-center gap-1 rounded-full border border-line bg-surface p-1 lg:flex xl:ml-4">
           {PRIMARY_NAV.map(({ to, label, end }) => (
@@ -186,7 +186,7 @@ function IncomeSetup() {
   if (!data || data.income_setup_done || later) return null
   return (
     <Modal open onClose={() => setLater(true)} title="Bagaimana kamu menerima pemasukan?" description="Supaya periode anggaran dan jatah harian sesuai. Bisa diubah kapan saja di Profil.">
-      <IncomeForm profile={data} submitLabel="Mulai pakai DompetKu" />
+      <IncomeForm profile={data} submitLabel="Mulai pakai MyFulus" />
     </Modal>
   )
 }

@@ -28,24 +28,24 @@ export default function DownloadMenu({ start, end, size = 'md', className }) {
     {
       label: 'Laporan Excel lengkap',
       hint: 'Ringkasan, transaksi, mutasi dompet, kategori, harian, anggaran, hutang, target',
-      fn: () => exportApi.report(start, end, `dompetku-laporan_${suffix}.xlsx`),
+      fn: () => exportApi.report(start, end, `myfulus-laporan_${suffix}.xlsx`),
       primary: true,
     },
     {
       label: 'Transaksi saja (Excel)',
       hint: 'Satu tabel rapi dengan filter dan total yang ikut filter',
-      fn: () => exportApi.transactionsXlsx(start, end, `dompetku-transaksi_${suffix}.xlsx`),
+      fn: () => exportApi.transactionsXlsx(start, end, `myfulus-transaksi_${suffix}.xlsx`),
     },
     {
       label: 'Pindahan saja (Excel)',
       hint: 'Pindahan antar dompet beserta biaya admin',
-      fn: () => exportApi.transfersXlsx(start, end, `dompetku-pindahan_${suffix}.xlsx`),
+      fn: () => exportApi.transfersXlsx(start, end, `myfulus-pindahan_${suffix}.xlsx`),
     },
   ]
 
   const raw = [
-    { label: 'Transaksi', fn: () => exportApi.transactions(range, `dompetku-transaksi_${suffix}.csv`) },
-    { label: 'Pindahan', fn: () => exportApi.transfers(range, `dompetku-pindahan_${suffix}.csv`) },
+    { label: 'Transaksi', fn: () => exportApi.transactions(range, `myfulus-transaksi_${suffix}.csv`) },
+    { label: 'Pindahan', fn: () => exportApi.transfers(range, `myfulus-pindahan_${suffix}.csv`) },
   ]
 
   return (
