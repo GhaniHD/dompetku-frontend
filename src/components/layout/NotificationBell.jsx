@@ -16,7 +16,7 @@ export default function NotificationBell() {
 
   return (
     <Popover
-      className="w-[min(92vw,380px)]"
+      className="w-[380px] max-sm:fixed max-sm:inset-x-3 max-sm:top-[72px] max-sm:mt-0 max-sm:w-auto"
       trigger={({ toggle }) => <IconButton icon={Bell} label="Notifikasi" onClick={toggle} badge={unread} />}
     >
       {(close) => (
