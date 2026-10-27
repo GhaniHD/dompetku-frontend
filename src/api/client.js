@@ -5,6 +5,27 @@ export const SERVER_URL = API_URL.replace(/\/api$/, '')
 
 const TOKEN_KEY = 'token'
 const USER_KEY = 'user'
+const NOTICE_KEY = 'logout_notice'
+
+// Pesan alasan keluar paksa, ditampilkan sekali di halaman masuk.
+export const logoutNotice = {
+  set: (message) => {
+    try {
+      sessionStorage.setItem(NOTICE_KEY, message)
+    } catch {
+      /* penyimpanan diblokir: abaikan */
+    }
+  },
+  take: () => {
+    try {
+      const message = sessionStorage.getItem(NOTICE_KEY)
+      sessionStorage.removeItem(NOTICE_KEY)
+      return message || ''
+    } catch {
+      return ''
+    }
+  },
+}
 
 export const session = {
   token: () => localStorage.getItem(TOKEN_KEY),
@@ -48,6 +69,7 @@ http.interceptors.response.use(
     const isCredentialCheck = url.startsWith('/auth/') || url === '/profile/password'
     if (status === 401 && !isCredentialCheck) {
       session.clear()
+      if (error.response?.data?.code) logoutNotice.set(error.response.data.message)
       if (!location.pathname.startsWith('/masuk')) location.assign('/masuk')
     }
     let message = error.response?.data?.message

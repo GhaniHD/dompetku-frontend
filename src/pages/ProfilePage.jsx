@@ -53,6 +53,12 @@ function AccountPanel({ profile }) {
         <div>
           <p className="text-lg font-semibold">{profile.name}</p>
           <p className="text-sm text-muted">Bergabung {dateLabel(profile.created_at, { month: 'long', year: 'numeric' })}</p>
+          {profile.last_login_at && (
+            <p className="text-[13px] text-muted">
+              Masuk terakhir: {profile.last_login_device || 'perangkat tidak dikenal'},{' '}
+              {new Date(profile.last_login_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
           <button type="button" onClick={() => fileRef.current?.click()} className="mt-1 text-sm font-semibold text-violet-ink hover:underline">
             {upload.isPending ? 'Mengunggah…' : 'Ganti foto'}
           </button>
@@ -99,7 +105,8 @@ function PasswordPanel() {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   return (
-    <Panel title="Password">
+    <Panel title="Password & keamanan">
+      <p className="mb-4 text-sm text-muted">Akun hanya aktif di satu perangkat. Masuk di perangkat lain akan mengeluarkan perangkat ini.</p>
       <form
         onSubmit={(e) => {
           e.preventDefault()
