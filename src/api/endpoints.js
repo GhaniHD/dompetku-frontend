@@ -34,6 +34,7 @@ export const profileApi = {
   changePassword: (body) => put('/profile/password', body),
   updateCycle: (startDay) => put('/profile/budget-cycle', { start_day: startDay }),
   updateIncome: (body) => put('/profile/income', body),
+  updateDailyCategories: (ids) => put('/profile/daily-categories', { category_ids: ids }),
   uploadAvatar: (file) => {
     const form = new FormData()
     form.append('avatar', file)
