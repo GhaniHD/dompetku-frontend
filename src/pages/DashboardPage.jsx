@@ -91,7 +91,7 @@ function budgetCell(budgets) {
       ),
     }
   }
-  if (free && budgets?.savings?.length) {
+  if (free && budgets?.savings_planned > 0) {
     return {
       label: 'Uang bebas',
       value: free.amount,
@@ -156,7 +156,7 @@ function TodayCard({ transactions, budgets, wallets, cycle, loading }) {
   let allowance = null
   let basis = ''
   if (budgets?.total_budget > 0) {
-    const budgeted = new Set(budgets.budgets.map((b) => b.category.name))
+    const budgeted = new Set(budgets.budgets.filter((b) => b.kind !== 'savings').map((b) => b.category.name))
     const spentBudgeted = todays.filter((t) => budgeted.has(t.category_name)).reduce((s, t) => s + t.amount, 0)
     allowance = Math.max(0, budgets.total_remain + spentBudgeted) / days
     basis = `Sisa anggaran dibagi ${days} hari sampai ${cycle.words.until}`
@@ -377,21 +377,26 @@ export default function DashboardPage() {
           <Panel title="Anggaran periode ini" action={<Link to="/anggaran" className="text-sm font-semibold text-violet-ink hover:underline">Atur</Link>}>
             {budgets.data?.budgets?.length ? (
               <ul className="space-y-4">
-                {budgets.data.budgets
-                  .slice()
-                  .sort((a, b) => b.used_pct - a.used_pct)
-                  .slice(0, 4)
-                  .map((b) => (
+                {[
+                  ...budgets.data.budgets.filter((b) => b.kind !== 'savings').sort((a, b) => b.used_pct - a.used_pct).slice(0, 4),
+                  ...budgets.data.budgets.filter((b) => b.kind === 'savings'),
+                ].map((b) => {
+                  const savings = b.kind === 'savings'
+                  return (
                     <li key={b.id}>
                       <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-                        <span className="truncate font-semibold">{b.category.name}</span>
+                        <span className="truncate font-semibold">{savings ? `Tabungan ${b.goal?.name || b.wallet?.name}` : b.category.name}</span>
                         <span className="num whitespace-nowrap text-muted">
                           <span className={cn('font-semibold', b.status === 'over_budget' ? 'text-expense' : 'text-ink')}>{rupiah(b.spent)}</span> / {rupiah(b.amount)}
                         </span>
                       </div>
-                      <Progress value={b.used_pct} tone={b.status === 'over_budget' ? 'expense' : b.status === 'warning' ? 'caution' : 'violet'} />
+                      <Progress
+                        value={Math.max(0, b.used_pct)}
+                        tone={savings ? (b.status === 'achieved' ? 'income' : 'violet') : b.status === 'over_budget' ? 'expense' : b.status === 'on_track' ? 'violet' : 'caution'}
+                      />
                     </li>
-                  ))}
+                  )
+                })}
               </ul>
             ) : (
               <p className="py-2 text-sm text-muted">Belum ada anggaran untuk periode ini.</p>
