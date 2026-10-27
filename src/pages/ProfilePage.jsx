@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Camera } from 'lucide-react'
 import { profileApi } from '../api/endpoints'
 import Avatar from '../components/layout/Avatar'
-import { Button, ErrorNote, Field, Input, PageHeader, Panel, Skeleton } from '../components/ui'
+import { Button, ErrorNote, Field, Input, Modal, PageHeader, Panel, Skeleton } from '../components/ui'
 import { useFeedback } from '../components/ui/feedback'
 import { useAuth } from '../context/auth'
 import { useAction, useProfile } from '../hooks/queries'
@@ -129,28 +129,66 @@ function PasswordPanel() {
   )
 }
 
-function DangerPanel() {
-  const { confirm, toast } = useFeedback()
+function DeleteAccountDialog({ onClose }) {
   const { logout } = useAuth()
   const navigate = useNavigate()
-  const remove = useAction(profileApi.remove, {
-    onSuccess: () => { logout(); navigate('/masuk', { replace: true }) },
-    onError: (e) => toast(e.message, 'error'),
-  })
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setBusy(true)
+    try {
+      await profileApi.remove(password)
+      logout()
+      navigate('/masuk', { replace: true })
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title="Hapus akun permanen?"
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>Batal</Button>
+          <Button type="submit" form="delete-account" variant="danger" loading={busy} disabled={!password}>Hapus permanen</Button>
+        </>
+      }
+    >
+      <form id="delete-account" onSubmit={submit} className="space-y-4">
+        <p className="rounded-xl bg-expense-soft px-3.5 py-3 text-sm text-ink">
+          Akun dan <b>semua datamu</b> (dompet, transaksi, anggaran, hutang, target) langsung dihapus dari server dan <b>tidak bisa dipulihkan</b>, termasuk oleh admin.
+        </p>
+        <Field label="Password akun">{(id) => <PasswordInput id={id} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}</Field>
+        {error && <p className="rounded-xl bg-expense-soft px-3.5 py-2.5 text-sm text-expense">{error}</p>}
+      </form>
+    </Modal>
+  )
+}
+
+function DangerPanel({ profile }) {
+  const [open, setOpen] = useState(false)
+  const isAdmin = profile.role === 'admin'
   return (
     <Panel title="Hapus akun">
-      <p className="text-sm text-muted">Akun dan akses ke semua data keuanganmu akan dihapus. Unduh backup dulu bila ingin menyimpan atau memindahkan datamu.</p>
-      <div className="mt-4 flex justify-end">
-        <Button
-          variant="danger-soft"
-          loading={remove.isPending}
-          onClick={async () => {
-            if (await confirm({ title: 'Hapus akun ini?', message: 'Kamu akan keluar dan tidak bisa masuk lagi dengan akun ini.', confirmLabel: 'Hapus akun saya', danger: true })) remove.mutate()
-          }}
-        >
-          Hapus akun
-        </Button>
-      </div>
+      <p className="text-sm text-muted">
+        {isAdmin
+          ? 'Akun admin tidak bisa dihapus dari sini.'
+          : 'Akun dan semua data keuanganmu akan dihapus permanen dari server. Unduh backup dulu bila ingin menyimpan atau memindahkan datamu.'}
+      </p>
+      {!isAdmin && (
+        <div className="mt-4 flex justify-end">
+          <Button variant="danger-soft" onClick={() => setOpen(true)}>Hapus akun</Button>
+        </div>
+      )}
+      {open && <DeleteAccountDialog onClose={() => setOpen(false)} />}
     </Panel>
   )
 }
@@ -192,7 +230,7 @@ export default function ProfilePage() {
             <div className="space-y-5">
               <IncomePanel key={`${p.income_type}-${p.budget_start_day}`} profile={p} />
               <BackupPanel />
-              <DangerPanel />
+              <DangerPanel profile={p} />
             </div>
           </div>
         </>

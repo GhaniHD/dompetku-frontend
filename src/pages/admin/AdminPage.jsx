@@ -123,7 +123,7 @@ function useUserActions() {
   })
 
   const askRemove = async (u) => {
-    if (await confirm({ title: `Hapus akun ${u.name}?`, message: 'Akun dan semua data keuangannya tidak bisa diakses lagi. Email ini juga tidak bisa dipakai mendaftar ulang.', confirmLabel: 'Hapus akun', danger: true })) remove.mutate(u.id)
+    if (await confirm({ title: `Hapus akun ${u.name}?`, message: 'Akun dan semua data keuangannya dihapus permanen dan tidak bisa dipulihkan. Email ini bisa dipakai mendaftar lagi sebagai akun baru.', confirmLabel: 'Hapus permanen', danger: true })) remove.mutate(u.id)
   }
 
   const dialogs = (

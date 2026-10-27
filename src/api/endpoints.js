@@ -40,7 +40,7 @@ export const profileApi = {
     form.append('avatar', file)
     return http.post('/profile/avatar', form).then((r) => r.data.data)
   },
-  remove: () => del('/profile'),
+  remove: (password) => http.delete('/profile', { data: { password } }).then((r) => r.data.data),
 }
 
 export const walletApi = {
