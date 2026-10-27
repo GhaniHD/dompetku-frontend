@@ -1,4 +1,4 @@
-const CACHE_NAME = 'myfulus-v1';
+const CACHE_NAME = 'myfulus-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 
