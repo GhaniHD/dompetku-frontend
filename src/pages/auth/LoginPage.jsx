@@ -4,6 +4,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { Button, Field, Input } from '../../components/ui'
 import AuthLayout from './AuthLayout'
+import { logoutNotice } from '../../api/client'
 
 export function PasswordInput(props) {
   const [show, setShow] = useState(false)
@@ -29,6 +30,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [notice] = useState(() => logoutNotice.take())
   const [loading, setLoading] = useState(false)
 
   const submit = async (e) => {
@@ -58,6 +60,7 @@ export default function LoginPage() {
       }
     >
       <form onSubmit={submit} className="space-y-4">
+        {notice && <p className="rounded-xl bg-caution-soft px-3.5 py-2.5 text-sm text-ink">{notice}</p>}
         <Field label="Email">{(id) => <Input id={id} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />}</Field>
         <Field label="Password">
           {(id) => <PasswordInput id={id} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}
