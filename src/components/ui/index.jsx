@@ -11,7 +11,7 @@ const BUTTON = {
   soft: 'bg-violet-soft text-violet-ink hover:bg-violet-soft/70',
   outline: 'border border-line bg-surface text-ink hover:bg-sunken',
   ghost: 'text-muted hover:bg-sunken hover:text-ink',
-  danger: 'bg-expense text-white hover:bg-expense/90',
+  danger: 'bg-expense text-white hover:bg-expense/90 disabled:bg-expense/40',
   'danger-soft': 'bg-expense-soft text-expense hover:bg-expense-soft/70',
 }
 

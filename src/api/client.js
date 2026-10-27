@@ -61,9 +61,19 @@ export class ApiError extends Error {
   }
 }
 
+// Respons berjenis blob (unduhan file) menyimpan pesan error sebagai JSON di dalam blob.
+async function blobJSON(data) {
+  try {
+    return JSON.parse(await data.text())
+  } catch {
+    return null
+  }
+}
+
 http.interceptors.response.use(
   (res) => res,
-  (error) => {
+  async (error) => {
+    if (error.response?.data instanceof Blob) error.response.data = await blobJSON(error.response.data)
     const status = error.response?.status
     const url = error.config?.url || ''
     const isCredentialCheck = url.startsWith('/auth/') || url === '/profile/password'
@@ -97,9 +107,8 @@ function clean(params) {
   return Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ''))
 }
 
-export async function download(url, params, filename) {
-  const res = await http.get(url, { params: clean(params), responseType: 'blob' })
-  const href = URL.createObjectURL(res.data)
+function saveBlob(blob, filename) {
+  const href = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = href
   a.download = filename
@@ -108,5 +117,18 @@ export async function download(url, params, filename) {
   a.remove()
   URL.revokeObjectURL(href)
 }
+
+export async function download(url, params, filename) {
+  const res = await http.get(url, { params: clean(params), responseType: 'blob' })
+  saveBlob(res.data, filename)
+}
+
+export async function downloadPost(url, body, fallbackName) {
+  const res = await http.post(url, body, { responseType: 'blob', timeout: 120000 })
+  const match = /filename="([^"]+)"/.exec(res.headers['content-disposition'] || '')
+  saveBlob(res.data, match ? match[1] : fallbackName)
+}
+
+export const postForm = (url, form) => http.post(url, form, { timeout: 120000 }).then(unwrap)
 
 export const assetUrl = (path) => (!path ? '' : /^https?:/.test(path) ? path : `${SERVER_URL}${path}`)

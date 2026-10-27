@@ -11,6 +11,7 @@ import { cn } from '../lib/cn'
 import { dateLabel, rupiah } from '../lib/format'
 import { PasswordInput } from './auth/LoginPage'
 import IncomeForm from '../components/forms/IncomeForm'
+import BackupPanel from '../components/BackupPanel'
 
 function AccountPanel({ profile }) {
   const { toast } = useFeedback()
@@ -138,7 +139,7 @@ function DangerPanel() {
   })
   return (
     <Panel title="Hapus akun">
-      <p className="text-sm text-muted">Akun dan akses ke semua data keuanganmu akan dihapus. Unduh laporan Excel dulu dari menu Laporan bila ingin menyimpan arsip.</p>
+      <p className="text-sm text-muted">Akun dan akses ke semua data keuanganmu akan dihapus. Unduh backup dulu bila ingin menyimpan atau memindahkan datamu.</p>
       <div className="mt-4 flex justify-end">
         <Button
           variant="danger-soft"
@@ -190,6 +191,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-5">
               <IncomePanel key={`${p.income_type}-${p.budget_start_day}`} profile={p} />
+              <BackupPanel />
               <DangerPanel />
             </div>
           </div>

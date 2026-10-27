@@ -1,4 +1,4 @@
-import { get, post, put, patch, del, http, download } from './client'
+import { get, post, put, patch, del, http, download, downloadPost, postForm } from './client'
 
 export const authApi = {
   login: (body) => post('/auth/login', body),
@@ -20,6 +20,12 @@ export const adminApi = {
   createInvite: (body) => post('/admin/invites', body),
   revokeInvite: (id) => del(`/admin/invites/${id}`),
   logs: () => get('/admin/logs'),
+}
+
+export const backupApi = {
+  export: (body) => downloadPost('/backup/export', body, 'dompetku-backup.dpk'),
+  preview: (form) => postForm('/backup/preview', form),
+  restore: (form) => postForm('/backup/restore', form),
 }
 
 export const profileApi = {
