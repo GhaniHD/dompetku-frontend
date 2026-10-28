@@ -10,4 +10,4 @@ export const isInstalledApp = () => {
   return window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true || document.referrer.startsWith('android-app://')
 }
 
-export const showAppDownload = () => isAndroid() && !isInstalledApp()
+export const showAppDownload = () => (isAndroid() || isIOS()) && !isInstalledApp()

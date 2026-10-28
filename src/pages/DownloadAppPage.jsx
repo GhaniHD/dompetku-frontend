@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Download, ShieldCheck, Smartphone } from 'lucide-react'
+import { Download, PlusSquare, Share, ShieldCheck, Smartphone } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { APK_URL, isIOS } from '../lib/platform'
 import AuthLayout from './auth/AuthLayout'
@@ -22,11 +22,22 @@ export default function DownloadAppPage() {
 
   if (isIOS()) {
     return (
-      <AuthLayout title="MyFulus di iPhone" subtitle="Aplikasi Android tidak bisa dipasang di iPhone, tapi MyFulus bisa ditambahkan ke layar utama." footer={back}>
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-ink">
-          <li>Buka myfulus.my.id di <b>Safari</b>.</li>
-          <li>Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas).</li>
-          <li>Pilih <b>Tambahkan ke Layar Utama</b>, lalu <b>Tambah</b>.</li>
+      <AuthLayout title="MyFulus di iPhone" subtitle="Tambahkan ke Layar Utama supaya MyFulus terbuka seperti aplikasi: ada ikon, layar penuh, tanpa bilah alamat." footer={back}>
+        <ol className="space-y-4">
+          {[
+            [Smartphone, 'Buka di Safari', 'Pastikan halaman myfulus.my.id dibuka di Safari. Di Chrome iPhone, menu Bagikan ada di kanan atas.'],
+            [Share, 'Ketuk tombol Bagikan', 'Ikon kotak dengan panah ke atas, di bagian bawah layar Safari.'],
+            [PlusSquare, 'Pilih Tambahkan ke Layar Utama', 'Gulir daftar menu sampai menemukannya, lalu ketuk Tambah di kanan atas.'],
+            [Smartphone, 'Buka dari ikon MyFulus', 'Mulai sekarang buka MyFulus dari ikon di layar utama. Masuk dengan akun yang sama.'],
+          ].map(([Icon, title, body], i) => (
+            <li key={title} className="flex gap-3">
+              <span className="grid size-7 shrink-0 place-items-center rounded-full bg-violet-soft text-sm font-semibold text-violet-ink">{i + 1}</span>
+              <div className="text-sm">
+                <p className="flex items-center gap-1.5 font-semibold"><Icon className="size-4 text-violet-ink" /> {title}</p>
+                <p className="text-muted">{body}</p>
+              </div>
+            </li>
+          ))}
         </ol>
       </AuthLayout>
     )
