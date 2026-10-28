@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  adminApi,
+  adminApi, announcementApi,
   analysisApi, budgetApi, categoryApi, debtApi, goalApi, notificationApi, profileApi,
   recurringApi, reportApi, transactionApi, transferApi, walletApi,
 } from '../api/endpoints'
@@ -57,6 +57,16 @@ export const useAdminUsers = (params) =>
 export const useAdminInvites = () => useQuery({ queryKey: ['admin', 'invites'], queryFn: adminApi.invites, select: list })
 
 export const useAdminLogs = () => useQuery({ queryKey: ['admin', 'logs'], queryFn: adminApi.logs, select: list })
+
+export const useAdminUser = (id) => useQuery({ queryKey: ['admin', 'user', id], queryFn: () => adminApi.user(id), enabled: !!id })
+
+export const useAdminActivity = (params) =>
+  useQuery({ queryKey: ['admin', 'activity', params], queryFn: () => adminApi.activity(params), select: list, placeholderData: (prev) => prev, refetchInterval: 60_000 })
+
+export const useAdminAnnouncements = () => useQuery({ queryKey: ['admin', 'announcements'], queryFn: adminApi.announcements, select: list })
+
+export const useActiveAnnouncements = () =>
+  useQuery({ queryKey: ['announcements'], queryFn: announcementApi.active, select: list, staleTime: 5 * 60_000, refetchInterval: 5 * 60_000 })
 
 export const useGoals = () => useQuery({ queryKey: ['goals'], queryFn: goalApi.list, select: list })
 

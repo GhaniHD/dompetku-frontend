@@ -1,39 +1,19 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LogOut, Moon, MoreHorizontal, Plus, Settings, ShieldCheck, Sun, UserRound } from 'lucide-react'
+import { LogOut, Moon, MoreHorizontal, Plus, Settings, Sun, UserRound } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useTheme } from '../../context/theme'
-import { useAdminSummary, useProfile } from '../../hooks/queries'
+import { useProfile } from '../../hooks/queries'
 import { cn } from '../../lib/cn'
 import { Button, IconButton, Modal } from '../ui'
 import IncomeForm from '../forms/IncomeForm'
 import Avatar from './Avatar'
 import Logo from './Logo'
+import AnnouncementBanner from './AnnouncementBanner'
 import NotificationBell from './NotificationBell'
 import Popover from './Popover'
 import { PRIMARY_NAV, SECONDARY_NAV } from './nav'
 import { QuickActionsProvider, useQuick } from './QuickActions'
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useIsAdmin() {
-  const { user } = useAuth()
-  const { data } = useProfile()
-  return (data?.role || user?.role) === 'admin'
-}
-
-function AdminRailLink() {
-  const { data } = useAdminSummary()
-  return (
-    <div className="relative">
-      <RailLink to="/admin" label="Admin" icon={ShieldCheck} />
-      {data?.pending > 0 && (
-        <span className="pointer-events-none absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-caution px-1 text-center text-[10px] font-bold leading-4 text-white">
-          {data.pending > 9 ? '9+' : data.pending}
-        </span>
-      )}
-    </div>
-  )
-}
 
 function RailLink({ to, label, icon: Icon, end }) {
   return (
@@ -58,7 +38,6 @@ function RailLink({ to, label, icon: Icon, end }) {
 
 function Rail({ onLogout }) {
   const { dark, toggle } = useTheme()
-  const isAdmin = useIsAdmin()
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[88px] flex-col items-center py-5 lg:flex">
       <Link to="/" aria-label="MyFulus" className="mb-6">
@@ -68,7 +47,6 @@ function Rail({ onLogout }) {
         {SECONDARY_NAV.map((item) => (
           <RailLink key={item.to} {...item} />
         ))}
-        {isAdmin && <AdminRailLink />}
       </nav>
       <div className="mt-auto flex flex-col items-center gap-1.5 rounded-full border border-line bg-surface px-1.5 py-2">
         <IconButton icon={dark ? Sun : Moon} label={dark ? 'Mode terang' : 'Mode gelap'} onClick={toggle} className="size-11" />
@@ -205,6 +183,7 @@ export default function AppShell() {
         <Rail onLogout={onLogout} />
         <TopBar onLogout={onLogout} />
         <main className="mx-auto max-w-[1320px] px-4 pb-28 pt-2 sm:px-6 lg:px-8 lg:pb-12">
+          <AnnouncementBanner />
           <Outlet />
         </main>
         <BottomNav />

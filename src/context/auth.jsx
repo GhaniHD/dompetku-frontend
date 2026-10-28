@@ -23,6 +23,8 @@ export function AuthProvider({ children }) {
         authApi.register({ name, email, password, invite_code: inviteCode || undefined }).then((res) => (res.token ? finish(res) : res)),
       replaceToken: (token) => session.save(token, null),
       logout: () => {
+        const token = session.token()
+        if (token) authApi.logout(token).catch(() => {})
         session.clear()
         qc.clear()
         setUser(null)

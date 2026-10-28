@@ -149,3 +149,38 @@ export function Legend2({ items, total }) {
     </ul>
   )
 }
+
+export function CountBarChart({ labels, data, unit = '', tone = 'violet', height = 220, highlightLast = false }) {
+  const t = useTokens()
+  const color = t[tone] || tone
+  const faded = color.replace('rgb(', 'rgba(').replace(')', ', 0.45)')
+  return (
+    <div style={{ height }}>
+      <Bar
+        data={{
+          labels,
+          datasets: [{
+            label: unit,
+            data,
+            backgroundColor: highlightLast ? data.map((_, i) => (i === data.length - 1 ? color : faded)) : color,
+            borderRadius: 5,
+            borderSkipped: false,
+            barPercentage: 0.8,
+            categoryPercentage: 0.9,
+          }],
+        }}
+        options={{
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { ...tooltip(t), displayColors: false, callbacks: { label: (c) => ` ${c.raw} ${unit}` } },
+          },
+          scales: {
+            x: { grid: { display: false }, border: { display: false }, ticks: { color: t.muted, autoSkip: true, maxRotation: 0, font: { family: "'Plus Jakarta Sans Variable', sans-serif", size: 11 } } },
+            y: { beginAtZero: true, grid: { color: t.line }, border: { display: false }, ticks: { color: t.muted, precision: 0, maxTicksLimit: 4, font: { family: "'Plus Jakarta Sans Variable', sans-serif", size: 11 } } },
+          },
+        }}
+      />
+    </div>
+  )
+}

@@ -5,6 +5,11 @@ export const authApi = {
   register: (body) => post('/auth/register', body),
   checkInvite: (code) => get(`/auth/invite/${encodeURIComponent(code)}`),
   resetPassword: (body) => post('/auth/reset-password', body),
+  logout: (token) => http.post('/auth/logout', null, { headers: { Authorization: `Bearer ${token}` } }),
+}
+
+export const announcementApi = {
+  active: () => get('/announcements'),
 }
 
 export const adminApi = {
@@ -14,8 +19,14 @@ export const adminApi = {
   reject: (id, reason) => post(`/admin/users/${id}/reject`, { reason }),
   suspend: (id, reason) => post(`/admin/users/${id}/suspend`, { reason }),
   activate: (id) => post(`/admin/users/${id}/activate`),
-  remove: (id) => del(`/admin/users/${id}`),
-  resetLink: (id) => post(`/admin/users/${id}/reset-link`),
+  user: (id) => get(`/admin/users/${id}`),
+  remove: ({ id, password }) => http.delete(`/admin/users/${id}`, { data: { password } }).then((r) => r.data.data),
+  resetLink: ({ id, password }) => post(`/admin/users/${id}/reset-link`, { password }),
+  forceLogout: ({ id, password }) => post(`/admin/users/${id}/logout`, { password }),
+  activity: (params) => get('/admin/activity', params),
+  announcements: () => get('/admin/announcements'),
+  createAnnouncement: (body) => post('/admin/announcements', body),
+  endAnnouncement: (id) => post(`/admin/announcements/${id}/end`),
   invites: () => get('/admin/invites'),
   createInvite: (body) => post('/admin/invites', body),
   revokeInvite: (id) => del(`/admin/invites/${id}`),

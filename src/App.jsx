@@ -24,7 +24,15 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const MorePage = lazy(() => import('./pages/MorePage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const AdminPage = lazy(() => import('./pages/admin/AdminPage'))
+const AdminShell = lazy(() => import('./admin/AdminShell'))
+const AdminDashboardPage = lazy(() => import('./admin/DashboardPage'))
+const AdminApprovalsPage = lazy(() => import('./admin/ApprovalsPage'))
+const AdminUsersPage = lazy(() => import('./admin/UsersPage'))
+const AdminActivityPage = lazy(() => import('./admin/ActivityPage'))
+const AdminInvitesPage = lazy(() => import('./admin/InvitesPage'))
+const AdminAnnouncementsPage = lazy(() => import('./admin/AnnouncementsPage'))
+const AdminLogsPage = lazy(() => import('./admin/LogsPage'))
+const AdminAccountPage = lazy(() => import('./admin/AccountPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +49,17 @@ function RequireAuth() {
 
 function GuestOnly() {
   const { user } = useAuth()
-  return user ? <Navigate to="/" replace /> : <Outlet />
+  if (!user) return <Outlet />
+  return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />
+}
+
+// Akun admin hanya membuka konsol admin; akun biasa tidak bisa membuka konsol.
+function RoleGate({ admin }) {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
+  if (admin && !isAdmin) return <Navigate to="/" replace />
+  if (!admin && isAdmin) return <Navigate to="/admin" replace />
+  return <Outlet />
 }
 
 function PageFallback() {
@@ -83,6 +101,20 @@ export default function App() {
                 <Route path="/atur-ulang-password" element={<ResetPasswordPage />} />
 
                 <Route element={<RequireAuth />}>
+                  <Route path="admin" element={<RoleGate admin />}>
+                    <Route element={<AdminShell />}>
+                      <Route index element={<AdminDashboardPage />} />
+                      <Route path="persetujuan" element={<AdminApprovalsPage />} />
+                      <Route path="pengguna" element={<AdminUsersPage />} />
+                      <Route path="aktivitas" element={<AdminActivityPage />} />
+                      <Route path="undangan" element={<AdminInvitesPage />} />
+                      <Route path="pengumuman" element={<AdminAnnouncementsPage />} />
+                      <Route path="log" element={<AdminLogsPage />} />
+                      <Route path="akun" element={<AdminAccountPage />} />
+                      <Route path="*" element={<Navigate to="/admin" replace />} />
+                    </Route>
+                  </Route>
+                  <Route element={<RoleGate />}>
                   <Route element={<AppShell />}>
                     <Route index element={<DashboardPage />} />
                     <Route path="transaksi" element={<TransactionsPage />} />
@@ -98,8 +130,8 @@ export default function App() {
                     <Route path="profil" element={<ProfilePage />} />
                     <Route path="notifikasi" element={<NotificationsPage />} />
                     <Route path="lainnya" element={<MorePage />} />
-                    <Route path="admin" element={<AdminPage />} />
                     <Route path="*" element={<NotFoundPage />} />
+                  </Route>
                   </Route>
                 </Route>
 
