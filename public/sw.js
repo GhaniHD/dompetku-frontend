@@ -1,4 +1,4 @@
-const CACHE_NAME = 'myfulus-v2';
+const CACHE_NAME = 'myfulus-v3';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -12,14 +12,18 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const { request } = e;
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/download/') || url.pathname.startsWith('/.well-known/')) return;
 
   if (request.mode === 'navigate') {
     e.respondWith(
       fetch(request)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put('/index.html', copy));
+          if (res.ok && (res.headers.get('content-type') || '').includes('text/html')) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put('/index.html', copy));
+          }
           return res;
         })
         .catch(() => caches.match('/index.html'))

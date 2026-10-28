@@ -10,6 +10,7 @@ import RegisterPage from './pages/auth/RegisterPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import UnsubscribePage from './pages/UnsubscribePage'
+import DownloadAppPage from './pages/DownloadAppPage'
 import DashboardPage from './pages/DashboardPage'
 
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
@@ -104,6 +105,7 @@ export default function App() {
                 </Route>
                 <Route path="/atur-ulang-password" element={<ResetPasswordPage />} />
                 <Route path="/berhenti-langganan" element={<UnsubscribePage />} />
+                <Route path="/unduh" element={<DownloadAppPage />} />
 
                 <Route element={<RequireAuth />}>
                   <Route path="admin" element={<RoleGate admin />}>

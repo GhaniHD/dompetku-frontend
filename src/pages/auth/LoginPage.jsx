@@ -5,6 +5,7 @@ import { useAuth } from '../../context/auth'
 import { authApi } from '../../api/endpoints'
 import { Button, Field, Input } from '../../components/ui'
 import CodeVerify from '../../components/CodeVerify'
+import AppDownloadBanner from '../../components/AppDownloadBanner'
 import { useFeatures } from '../../hooks/queries'
 import AuthLayout from './AuthLayout'
 import { logoutNotice } from '../../api/client'
@@ -136,6 +137,7 @@ export default function LoginPage() {
         ) : (
           <p className="text-center text-[13px] text-muted">Lupa password? Minta link atur ulang password ke admin.</p>
         )}
+        <AppDownloadBanner />
       </form>
     </AuthLayout>
   )

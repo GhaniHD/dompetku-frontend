@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { BarChart3, Bell, ChevronRight, LogOut, Moon, PieChart, Settings, Sun } from 'lucide-react'
+import { BarChart3, Bell, ChevronRight, LogOut, Moon, PieChart, Settings, Smartphone, Sun } from 'lucide-react'
 import { SECONDARY_NAV } from '../components/layout/nav'
 import { useAuth } from '../context/auth'
 import { useTheme } from '../context/theme'
+import { showAppDownload } from '../lib/platform'
 
 const ITEMS = [
   { to: '/anggaran', label: 'Anggaran', icon: PieChart, hint: 'Batas pengeluaran per periode' },
@@ -16,7 +17,7 @@ export default function MorePage() {
   const { logout } = useAuth()
   const navigate = useNavigate()
   const { dark, toggle } = useTheme()
-  const items = ITEMS
+  const items = showAppDownload() ? [...ITEMS, { to: '/unduh', label: 'Aplikasi Android', icon: Smartphone, hint: 'Unduh dan pasang MyFulus di HP' }] : ITEMS
   const row = 'flex w-full items-center gap-4 px-5 py-3.5 text-left hover:bg-sunken'
 
   return (
