@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { MailCheck } from 'lucide-react'
+import { Loader2, MailCheck } from 'lucide-react'
 import { authApi } from '../../api/endpoints'
 import { Button, Field, Input } from '../../components/ui'
 import AuthLayout from './AuthLayout'
@@ -11,6 +11,13 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+
+  useEffect(() => {
+    if (!sent || elapsed >= 30) return undefined
+    const t = setTimeout(() => setElapsed((s) => s + 1), 1000)
+    return () => clearTimeout(t)
+  }, [sent, elapsed])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -18,6 +25,7 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     try {
       await authApi.forgotPassword(email.trim())
+      setElapsed(0)
       setSent(true)
     } catch (err) {
       setError(err.message)
@@ -39,9 +47,19 @@ export default function ForgotPasswordPage() {
           <MailCheck className="mt-0.5 size-5 shrink-0 text-violet-ink" />
           <div>
             <p className="font-semibold">Link berlaku 30 menit</p>
-            <p className="mt-1 text-muted">Buka email dari MyFulus lalu tekan tombol Buat password baru. Tidak ada di kotak masuk? Cek folder Spam atau Promosi.</p>
+            <p className="mt-1 text-muted">Buka email dari MyFulus lalu tekan tombol Buat password baru.</p>
+            {elapsed < 30 && (
+              <p className="mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+                <Loader2 className="size-3.5 animate-spin" /> Email biasanya tiba dalam 10–30 detik.
+              </p>
+            )}
           </div>
         </div>
+        {elapsed >= 30 && (
+          <p className="mt-3 rounded-xl bg-caution-soft px-3.5 py-2.5 text-[13px] text-ink">
+            Belum masuk? Cek folder <b>Spam</b> atau <b>Promosi</b>, dan pastikan emailnya benar: <b className="break-all">{email}</b>.
+          </p>
+        )}
         <button type="button" onClick={() => setSent(false)} className="mt-4 text-sm font-semibold text-violet-ink hover:underline">
           Kirim ke email lain
         </button>

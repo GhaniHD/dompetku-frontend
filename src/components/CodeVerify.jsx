@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { MailCheck } from 'lucide-react'
+import { Loader2, MailCheck } from 'lucide-react'
 import { Button } from './ui'
 
 // CodeVerify: isian kode 6 digit dengan tombol kirim ulang berhitung mundur.
@@ -10,7 +10,14 @@ export default function CodeVerify({ email, initialResendIn = 0, onSubmit, onRes
   const [busy, setBusy] = useState(false)
   const [sending, setSending] = useState(false)
   const [wait, setWait] = useState(initialResendIn)
+  const [elapsed, setElapsed] = useState(0)
   const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (elapsed >= 30) return undefined
+    const t = setTimeout(() => setElapsed((s) => s + 1), 1000)
+    return () => clearTimeout(t)
+  }, [elapsed])
 
   useEffect(() => {
     if (wait <= 0) return undefined
@@ -47,6 +54,7 @@ export default function CodeVerify({ email, initialResendIn = 0, onSubmit, onRes
     try {
       const res = await onResend()
       setWait(res?.resend_in || 60)
+      setElapsed(0)
       setInfo(`Kode baru dikirim ke ${res?.email || email}.`)
     } catch (err) {
       if (err.data?.retry_after) setWait(err.data.retry_after)
@@ -66,10 +74,22 @@ export default function CodeVerify({ email, initialResendIn = 0, onSubmit, onRes
     >
       <div className="flex gap-3 rounded-2xl bg-violet-soft p-4 text-sm">
         <MailCheck className="mt-0.5 size-5 shrink-0 text-violet-ink" />
-        <p>
-          Kami mengirim kode 6 digit ke <b className="break-all">{email}</b>. Kode berlaku 15 menit.
-        </p>
+        <div>
+          <p>
+            Kami mengirim kode 6 digit ke <b className="break-all">{email}</b>. Kode berlaku 15 menit.
+          </p>
+          {elapsed < 30 && (
+            <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted">
+              <Loader2 className="size-3.5 animate-spin" /> Email biasanya tiba dalam 10–30 detik.
+            </p>
+          )}
+        </div>
       </div>
+      {elapsed >= 30 && !code && (
+        <p className="rounded-xl bg-caution-soft px-3.5 py-2.5 text-[13px] text-ink">
+          Belum masuk? Cek folder <b>Spam</b> atau <b>Promosi</b>, dan pastikan alamatnya benar: <b className="break-all">{email}</b>.
+        </p>
+      )}
       <input
         ref={inputRef}
         value={code}
@@ -89,7 +109,6 @@ export default function CodeVerify({ email, initialResendIn = 0, onSubmit, onRes
         {submitLabel}
       </Button>
       <div className="text-center text-[13px] text-muted">
-        Tidak menerima email? Cek folder Spam atau Promosi.{' '}
         {wait > 0 ? (
           <span>Kirim ulang dalam {wait} detik.</span>
         ) : (
