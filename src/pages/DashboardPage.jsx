@@ -150,9 +150,12 @@ function isToday(value) {
   return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate()
 }
 
+const ROW_LIMIT = 5
+
 function TodayCard({ transactions, budgets, wallets, cycle, profile, loading }) {
   const quick = useQuick()
   const [settings, setSettings] = useState(false)
+  const [showAll, setShowAll] = useState(false)
   const selectedIds = profile?.daily_category_ids || []
   const { data: categories = [] } = useCategories('expense')
   const todays = transactions.filter((t) => t.type === 'expense' && isToday(t.date))
@@ -209,7 +212,7 @@ function TodayCard({ transactions, budgets, wallets, cycle, profile, loading }) 
 
           {rows.length > 1 && (
             <ul className="mt-4 space-y-2.5">
-              {rows.map((r) => {
+              {(showAll ? rows : rows.slice(0, ROW_LIMIT)).map((r) => {
                 const rowPct = r.allowance ? (r.spent / r.allowance) * 100 : r.spent > 0 ? 101 : 0
                 return (
                   <li key={r.id}>
@@ -228,6 +231,13 @@ function TodayCard({ transactions, budgets, wallets, cycle, profile, loading }) 
                   </li>
                 )
               })}
+              {rows.length > ROW_LIMIT && (
+                <li>
+                  <button type="button" onClick={() => setShowAll((v) => !v)} className="text-[13px] font-semibold text-violet-ink hover:underline">
+                    {showAll ? 'Sembunyikan' : `Lihat semua (${rows.length - ROW_LIMIT} anggaran lainnya)`}
+                  </button>
+                </li>
+              )}
             </ul>
           )}
           {missing.length > 0 && <p className="mt-2 text-xs text-faint">{missing.join(', ')} belum ada anggaran periode ini.</p>}

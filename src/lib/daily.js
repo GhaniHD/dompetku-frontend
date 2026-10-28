@@ -9,12 +9,16 @@ function budgetRow(budget, todays, days) {
   return { id: budget.category.id, name: budget.category.name, spent, allowance, left: allowance - spent, items }
 }
 
+// Urutan rincian: pemakaian jatah hari ini tertinggi lebih dulu.
+const usage = (r) => (r.allowance ? r.spent / r.allowance : r.spent > 0 ? Infinity : 0)
+const byUsage = (a, b) => usage(b) - usage(a) || b.spent - a.spent || a.name.localeCompare(b.name)
+
 export function dailyPlan({ todays, budgets, wallets, days, selectedIds = [], categories = [], until }) {
   const expenseBudgets = (budgets?.budgets || []).filter((b) => b.kind !== 'savings')
 
   if (selectedIds.length) {
     const byCategory = new Map(expenseBudgets.map((b) => [b.category.id, b]))
-    const rows = selectedIds.filter((id) => byCategory.has(id)).map((id) => budgetRow(byCategory.get(id), todays, days))
+    const rows = selectedIds.filter((id) => byCategory.has(id)).map((id) => budgetRow(byCategory.get(id), todays, days)).sort(byUsage)
     const missing = selectedIds
       .filter((id) => !byCategory.has(id))
       .map((id) => categories.find((c) => c.id === id)?.name)
@@ -35,16 +39,16 @@ export function dailyPlan({ todays, budgets, wallets, days, selectedIds = [], ca
   }
 
   if (expenseBudgets.length && budgets.total_budget > 0) {
-    const budgeted = new Set(expenseBudgets.map((b) => b.category.id))
-    const counted = todays.filter((t) => budgeted.has(t.category_id))
+    const rows = expenseBudgets.map((b) => budgetRow(b, todays, days)).sort(byUsage)
+    const counted = rows.flatMap((r) => r.items)
     const spent = sum(counted)
     return {
       mode: 'all',
-      rows: [],
+      rows,
       missing: [],
       counted,
       spent,
-      allowance: Math.max(0, budgets.total_remain + spent) / days,
+      allowance: rows.reduce((s, r) => s + r.allowance, 0),
       other: sum(todays) - spent,
       basis: `Sisa semua anggaran dibagi ${days} hari sampai ${until}`,
     }
