@@ -3,26 +3,11 @@ import { ShieldAlert } from 'lucide-react'
 import { CountBarChart } from '../components/charts'
 import { Empty, ErrorNote, PageHeader, Panel, Skeleton } from '../components/ui'
 import { useAdminSummary, useAdminUsers } from '../hooks/queries'
-import { cn } from '../lib/cn'
 import { timeAgo } from '../lib/format'
-import { OnlineDot } from './shared'
+import { OnlineDot, Stat } from './shared'
 
 const hourLabel = (iso) => new Date(iso).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':')
 const weekLabel = (iso) => new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
-
-function Stat({ label, value, tone, dot, to, loading }) {
-  const body = (
-    <>
-      <p className="flex items-center gap-2 text-[13px] text-muted">{dot && <OnlineDot online />} {label}</p>
-      {loading ? <Skeleton className="mt-2 h-9 w-16" /> : <p className={cn('num mt-1 text-[32px] font-semibold leading-tight', tone)}>{value ?? 0}</p>}
-    </>
-  )
-  return to ? (
-    <Link to={to} className="panel block p-5 transition-colors hover:border-violet/40">{body}</Link>
-  ) : (
-    <div className="panel p-5">{body}</div>
-  )
-}
 
 function OnlineList() {
   const { data = [], isLoading } = useAdminUsers({ online: true })

@@ -10,6 +10,7 @@ import IncomeForm from '../forms/IncomeForm'
 import Avatar from './Avatar'
 import Logo from './Logo'
 import AnnouncementBanner from './AnnouncementBanner'
+import EmailVerifyNudge from './EmailVerifyNudge'
 import NotificationBell from './NotificationBell'
 import Popover from './Popover'
 import { PRIMARY_NAV, SECONDARY_NAV } from './nav'
@@ -183,6 +184,7 @@ export default function AppShell() {
         <Rail onLogout={onLogout} />
         <TopBar onLogout={onLogout} />
         <main className="mx-auto max-w-[1320px] px-4 pb-28 pt-2 sm:px-6 lg:px-8 lg:pb-12">
+          <EmailVerifyNudge />
           <AnnouncementBanner />
           <Outlet />
         </main>

@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Check, Copy } from 'lucide-react'
 import { adminApi } from '../api/endpoints'
-import { Button, Field, Modal, Textarea } from '../components/ui'
+import { Button, Field, Modal, Skeleton, Textarea } from '../components/ui'
 import { useFeedback } from '../components/ui/feedback'
 import { useAction } from '../hooks/queries'
 import { cn } from '../lib/cn'
@@ -14,6 +15,20 @@ export function OnlineDot({ online, className }) {
       aria-label={online ? 'Sedang online' : 'Offline'}
       className={cn('inline-block size-2.5 shrink-0 rounded-full', online ? 'bg-income shadow-[0_0_0_3px_rgb(var(--income)/0.18)]' : 'bg-line', className)}
     />
+  )
+}
+
+export function Stat({ label, value, tone, dot, to, loading }) {
+  const body = (
+    <>
+      <p className="flex items-center gap-2 text-[13px] text-muted">{dot && <OnlineDot online />} {label}</p>
+      {loading ? <Skeleton className="mt-2 h-9 w-16" /> : <p className={cn('num mt-1 text-[32px] font-semibold leading-tight', tone)}>{value ?? 0}</p>}
+    </>
+  )
+  return to ? (
+    <Link to={to} className="panel block p-5 transition-colors hover:border-violet/40">{body}</Link>
+  ) : (
+    <div className="panel p-5">{body}</div>
   )
 }
 
@@ -130,6 +145,7 @@ export function useUserActions({ onDeleted } = {}) {
   const activate = useAction(adminApi.activate, done('Akun aktif lagi'))
   const remove = useAction(adminApi.remove, { onSuccess: () => { toast('Akun dihapus permanen'); onDeleted?.() } })
   const forceLogout = useAction(adminApi.forceLogout, { onSuccess: () => toast('Pengguna dikeluarkan dari semua perangkat') })
+  const verifyEmail = useAction(adminApi.verifyEmail, { onSuccess: () => toast('Email ditandai terverifikasi') })
   const resetLink = useAction(adminApi.resetLink, {
     onSuccess: (res) => setShare({ url: `${window.location.origin}/atur-ulang-password?token=${res.token}` }),
   })
@@ -158,6 +174,14 @@ export function useUserActions({ onDeleted } = {}) {
       run: (password) => resetLink.mutateAsync({ id: u.id, password }),
     })
 
+  const askVerifyEmail = (u) =>
+    setConfirmReq({
+      title: `Tandai email ${u.name} terverifikasi?`,
+      description: `Pakai ini hanya bila kamu sudah memastikan ${u.email} memang milik pengguna ini, misalnya kode tidak pernah sampai. Tindakan ini dicatat di log admin.`,
+      confirmLabel: 'Tandai terverifikasi',
+      run: (password) => verifyEmail.mutateAsync({ id: u.id, password }),
+    })
+
   const dialogs = (
     <>
       <ReasonDialog
@@ -182,7 +206,7 @@ export function useUserActions({ onDeleted } = {}) {
   )
 
   return {
-    approve, activate, askRemove, askForceLogout, askResetLink, dialogs,
+    approve, activate, askRemove, askForceLogout, askResetLink, askVerifyEmail, dialogs,
     askReject: (user) => setReasonFor({ kind: 'reject', user }),
     askSuspend: (user) => setReasonFor({ kind: 'suspend', user }),
   }

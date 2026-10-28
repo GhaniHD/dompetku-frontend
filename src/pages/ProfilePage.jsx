@@ -12,12 +12,12 @@ import { dateLabel, rupiah } from '../lib/format'
 import { PasswordInput } from './auth/LoginPage'
 import IncomeForm from '../components/forms/IncomeForm'
 import BackupPanel from '../components/BackupPanel'
+import { EmailBlock, EmailPrefsPanel } from '../components/EmailSettings'
 
 function AccountPanel({ profile }) {
   const { toast } = useFeedback()
   const { patchUser } = useAuth()
   const [name, setName] = useState(profile.name)
-  const [email, setEmail] = useState(profile.email)
   const [error, setError] = useState('')
   const fileRef = useRef(null)
 
@@ -39,7 +39,7 @@ function AccountPanel({ profile }) {
     upload.mutate(file)
   }
 
-  const dirty = name.trim() !== profile.name || email.trim() !== profile.email
+  const dirty = name.trim() !== profile.name
 
   return (
     <Panel title="Akun">
@@ -65,14 +65,16 @@ function AccountPanel({ profile }) {
           </button>
         </div>
       </div>
-      <form onSubmit={(e) => { e.preventDefault(); save.mutate({ name: name.trim(), email: email.trim() }) }} className="space-y-4">
+      <form onSubmit={(e) => { e.preventDefault(); save.mutate({ name: name.trim() }) }} className="space-y-4">
         <Field label="Nama">{(id) => <Input id={id} value={name} onChange={(e) => setName(e.target.value)} required minLength={2} />}</Field>
-        <Field label="Email">{(id) => <Input id={id} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />}</Field>
         {error && <p className="rounded-xl bg-expense-soft px-3.5 py-2.5 text-sm text-expense">{error}</p>}
         <div className="flex justify-end">
-          <Button type="submit" disabled={!dirty} loading={save.isPending}>Simpan profil</Button>
+          <Button type="submit" disabled={!dirty} loading={save.isPending}>Simpan nama</Button>
         </div>
       </form>
+      <div className="mt-5 border-t border-line pt-5">
+        <EmailBlock profile={profile} />
+      </div>
     </Panel>
   )
 }
@@ -229,6 +231,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-5">
               <IncomePanel key={`${p.income_type}-${p.budget_start_day}`} profile={p} />
+              <EmailPrefsPanel profile={p} />
               <BackupPanel />
               <DangerPanel profile={p} />
             </div>

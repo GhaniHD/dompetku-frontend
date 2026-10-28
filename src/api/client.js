@@ -55,9 +55,11 @@ http.interceptors.request.use((config) => {
 })
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, code = '', data = null) {
     super(message)
     this.status = status
+    this.code = code
+    this.data = data
   }
 }
 
@@ -88,7 +90,8 @@ http.interceptors.response.use(
       else if (!error.response) message = 'Tidak bisa terhubung ke server. Periksa koneksi internet.'
       else message = 'Terjadi kesalahan di server.'
     }
-    return Promise.reject(new ApiError(message, status))
+    const body = error.response?.data
+    return Promise.reject(new ApiError(message, status, body?.code || '', body?.data ?? null))
   }
 )
 

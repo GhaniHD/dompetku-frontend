@@ -8,6 +8,8 @@ import { Skeleton } from './components/ui'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
+import UnsubscribePage from './pages/UnsubscribePage'
 import DashboardPage from './pages/DashboardPage'
 
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
@@ -32,6 +34,7 @@ const AdminActivityPage = lazy(() => import('./admin/ActivityPage'))
 const AdminInvitesPage = lazy(() => import('./admin/InvitesPage'))
 const AdminAnnouncementsPage = lazy(() => import('./admin/AnnouncementsPage'))
 const AdminLogsPage = lazy(() => import('./admin/LogsPage'))
+const AdminEmailPage = lazy(() => import('./admin/EmailPage'))
 const AdminAccountPage = lazy(() => import('./admin/AccountPage'))
 
 const queryClient = new QueryClient({
@@ -97,8 +100,10 @@ export default function App() {
                 <Route element={<GuestOnly />}>
                   <Route path="/masuk" element={<LoginPage />} />
                   <Route path="/daftar" element={<RegisterPage />} />
+                  <Route path="/lupa-password" element={<ForgotPasswordPage />} />
                 </Route>
                 <Route path="/atur-ulang-password" element={<ResetPasswordPage />} />
+                <Route path="/berhenti-langganan" element={<UnsubscribePage />} />
 
                 <Route element={<RequireAuth />}>
                   <Route path="admin" element={<RoleGate admin />}>
@@ -110,6 +115,7 @@ export default function App() {
                       <Route path="undangan" element={<AdminInvitesPage />} />
                       <Route path="pengumuman" element={<AdminAnnouncementsPage />} />
                       <Route path="log" element={<AdminLogsPage />} />
+                      <Route path="email" element={<AdminEmailPage />} />
                       <Route path="akun" element={<AdminAccountPage />} />
                       <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Route>

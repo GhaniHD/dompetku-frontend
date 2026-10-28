@@ -13,4 +13,6 @@ export const EVENTS = {
   password_changed: { label: 'Ganti password', tone: 'violet' },
   password_reset: { label: 'Reset password', tone: 'violet' },
   forced_logout: { label: 'Dikeluarkan admin', tone: 'caution' },
+  email_verified: { label: 'Email terverifikasi', tone: 'income' },
+  email_changed: { label: 'Ganti email', tone: 'violet' },
 }

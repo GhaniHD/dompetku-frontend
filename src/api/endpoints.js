@@ -5,6 +5,10 @@ export const authApi = {
   register: (body) => post('/auth/register', body),
   checkInvite: (code) => get(`/auth/invite/${encodeURIComponent(code)}`),
   resetPassword: (body) => post('/auth/reset-password', body),
+  forgotPassword: (email) => post('/auth/forgot-password', { email }),
+  verify: (body) => post('/auth/verify', body),
+  sendCode: (verifyToken) => post('/auth/verify/send', { verify_token: verifyToken }),
+  features: () => get('/auth/features'),
   logout: (token) => http.post('/auth/logout', null, { headers: { Authorization: `Bearer ${token}` } }),
 }
 
@@ -31,6 +35,8 @@ export const adminApi = {
   createInvite: (body) => post('/admin/invites', body),
   revokeInvite: (id) => del(`/admin/invites/${id}`),
   logs: () => get('/admin/logs'),
+  verifyEmail: ({ id, password }) => post(`/admin/users/${id}/verify-email`, { password }),
+  emailStats: () => get('/admin/email-stats'),
 }
 
 export const backupApi = {
@@ -46,6 +52,11 @@ export const profileApi = {
   updateCycle: (startDay) => put('/profile/budget-cycle', { start_day: startDay }),
   updateIncome: (body) => put('/profile/income', body),
   updateDailyCategories: (ids) => put('/profile/daily-categories', { category_ids: ids }),
+  changeEmail: (body) => post('/profile/email', body),
+  cancelEmail: () => del('/profile/email/pending'),
+  sendEmailCode: () => post('/profile/email/send-code'),
+  verifyEmail: (code) => post('/profile/email/verify', { code }),
+  updateEmailPrefs: (prefs) => put('/profile/email-prefs', prefs),
   uploadAvatar: (file) => {
     const form = new FormData()
     form.append('avatar', file)
@@ -144,4 +155,8 @@ export const exportApi = {
   transfersXlsx: (start, end, name) => download('/export/transfers.xlsx', { start, end }, name),
   transactions: (params, name) => download('/export/transactions.csv', params, name),
   transfers: (params, name) => download('/export/transfers.csv', params, name),
+}
+
+export const emailApi = {
+  unsubscribe: (token) => post('/email/unsubscribe', { token }),
 }

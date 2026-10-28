@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       login: (email, password) => authApi.login({ email, password }).then(finish),
+      verifyLogin: (verifyToken, code) => authApi.verify({ verify_token: verifyToken, code }).then(finish),
       register: (name, email, password, inviteCode) =>
         authApi.register({ name, email, password, invite_code: inviteCode || undefined }).then((res) => (res.token ? finish(res) : res)),
       replaceToken: (token) => session.save(token, null),

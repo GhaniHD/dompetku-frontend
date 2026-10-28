@@ -1,12 +1,21 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronRight, KeyRound, LogOut, Search, ShieldCheck, Trash2, UserCheck, UserX, Users } from 'lucide-react'
+import { BadgeCheck, ChevronRight, KeyRound, LogOut, MailWarning, Search, ShieldCheck, Trash2, UserCheck, UserX, Users } from 'lucide-react'
 import { Badge, Button, Empty, ErrorNote, Input, Modal, PageHeader, Select, Skeleton } from '../components/ui'
 import { useAdminUser, useAdminUsers } from '../hooks/queries'
 import { cn } from '../lib/cn'
 import { dateLabel, timeAgo } from '../lib/format'
 import { EVENTS, STATUS } from './constants'
 import { OnlineDot, useUserActions } from './shared'
+
+function EmailBadge({ u }) {
+  if (u.role === 'admin') return null
+  if (u.email_bounced) return <Badge tone="expense"><MailWarning className="size-3" /> Email terpental</Badge>
+  if (!u.email_verified) return <Badge tone="caution"><MailWarning className="size-3" /> Email belum diverifikasi</Badge>
+  return null
+}
+
+const emailState = (u) => (u.email_bounced ? 'Terpental' : u.email_verified ? 'Terverifikasi' : u.email_pending ? 'Belum, sedang ganti email' : 'Belum diverifikasi')
 
 const lastActive = (u) => (u.online ? 'Online sekarang' : u.last_seen_at ? `Aktif ${timeAgo(u.last_seen_at)}` : u.last_login_at ? `Masuk ${timeAgo(u.last_login_at)}` : 'Belum pernah masuk')
 
@@ -35,6 +44,7 @@ function UserDetail({ id, onClose }) {
   const facts = u
     ? [
         ['Status', st.label],
+        ['Email', isAdmin ? 'Admin' : emailState(u)],
         ['Terakhir aktif', u.online ? 'Online sekarang' : u.last_seen_at ? new Date(u.last_seen_at).toLocaleString('id-ID') : '—'],
         ['Login terakhir', u.last_login_at ? `${new Date(u.last_login_at).toLocaleString('id-ID')}` : 'Belum pernah'],
         ['Perangkat', u.last_login_device || '—'],
@@ -56,6 +66,8 @@ function UserDetail({ id, onClose }) {
             <span className="text-sm font-semibold">{lastActive(u)}</span>
             <Badge tone={st.tone}>{st.label}</Badge>
             {isAdmin && <Badge tone="violet"><ShieldCheck className="size-3" /> Admin</Badge>}
+            {!isAdmin && u.email_verified && <Badge tone="income"><BadgeCheck className="size-3" /> Email terverifikasi</Badge>}
+            <EmailBadge u={u} />
           </div>
           <dl className="grid grid-cols-1 gap-x-6 gap-y-2.5 rounded-2xl bg-sunken p-4 text-sm sm:grid-cols-2">
             {facts.map(([k, v]) => (
@@ -73,6 +85,7 @@ function UserDetail({ id, onClose }) {
               {u.status === 'suspended' && <Button size="sm" icon={UserCheck} onClick={() => actions.activate.mutate(u.id)}>Aktifkan lagi</Button>}
               {u.status === 'active' && <Button size="sm" variant="outline" icon={LogOut} onClick={() => actions.askForceLogout(u)}>Keluarkan dari perangkat</Button>}
               <Button size="sm" variant="outline" icon={KeyRound} onClick={() => actions.askResetLink(u)}>Link atur ulang password</Button>
+              {!u.email_verified && <Button size="sm" variant="outline" icon={BadgeCheck} onClick={() => actions.askVerifyEmail(u)}>Tandai email terverifikasi</Button>}
               {u.status === 'active' && <Button size="sm" variant="danger-soft" icon={UserX} onClick={() => actions.askSuspend(u)}>Nonaktifkan</Button>}
               {u.status === 'pending' && <Button size="sm" variant="danger-soft" icon={UserX} onClick={() => actions.askReject(u)}>Tolak</Button>}
               <Button size="sm" variant="danger-soft" icon={Trash2} onClick={() => actions.askRemove(u)}>Hapus permanen</Button>
@@ -145,6 +158,7 @@ export default function UsersPage() {
                     <span className="truncate font-semibold">{u.name}</span>
                     <Badge tone={st.tone}>{st.label}</Badge>
                     {u.role === 'admin' && <Badge tone="violet"><ShieldCheck className="size-3" /> Admin</Badge>}
+                    <EmailBadge u={u} />
                   </div>
                   <p className="truncate text-sm text-muted">{u.email}</p>
                   <p className="mt-0.5 text-xs text-faint">

@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../context/auth'
+import { authApi } from '../../api/endpoints'
 import { Button, Field, Input } from '../../components/ui'
+import CodeVerify from '../../components/CodeVerify'
+import { useFeatures } from '../../hooks/queries'
 import AuthLayout from './AuthLayout'
 import { logoutNotice } from '../../api/client'
 
@@ -23,15 +26,42 @@ export function PasswordInput(props) {
   )
 }
 
+// VerifyStep dipakai saat login atau daftar lewat undangan yang masih
+// menunggu verifikasi email.
+export function VerifyStep({ challenge, onDone, onExpired }) {
+  const { verifyLogin } = useAuth()
+  const submit = async (code) => {
+    try {
+      await verifyLogin(challenge.verify_token, code)
+      onDone()
+    } catch (err) {
+      if (err.code === 'challenge_expired') onExpired(err.message)
+      throw err
+    }
+  }
+  const resend = async () => {
+    try {
+      return await authApi.sendCode(challenge.verify_token)
+    } catch (err) {
+      if (err.code === 'challenge_expired') onExpired(err.message)
+      throw err
+    }
+  }
+  return <CodeVerify email={challenge.email} initialResendIn={challenge.resend_in || 0} onSubmit={submit} onResend={resend} submitLabel="Verifikasi & masuk" />
+}
+
 export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const features = useFeatures()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [notice] = useState(() => logoutNotice.take())
+  const [notice, setNotice] = useState(() => logoutNotice.take())
   const [loading, setLoading] = useState(false)
+  const [challenge, setChallenge] = useState(null)
+  const goIn = () => navigate(location.state?.from || '/', { replace: true })
 
   const submit = async (e) => {
     e.preventDefault()
@@ -39,11 +69,39 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email.trim(), password)
-      navigate(location.state?.from || '/', { replace: true })
+      goIn()
     } catch (err) {
-      setError(err.message)
+      if (err.code === 'email_unverified' && err.data?.verify_token) {
+        setPassword('')
+        setChallenge(err.data)
+      } else {
+        setError(err.message)
+      }
       setLoading(false)
     }
+  }
+
+  if (challenge) {
+    return (
+      <AuthLayout
+        title="Verifikasi emailmu"
+        subtitle="Satu langkah lagi. Masukkan kode untuk memastikan email ini milikmu."
+        footer={
+          <button type="button" onClick={() => setChallenge(null)} className="font-semibold text-violet-ink hover:underline">
+            Kembali ke halaman masuk
+          </button>
+        }
+      >
+        <VerifyStep
+          challenge={challenge}
+          onDone={goIn}
+          onExpired={(message) => {
+            setChallenge(null)
+            setNotice(message)
+          }}
+        />
+      </AuthLayout>
+    )
   }
 
   return (
@@ -69,7 +127,15 @@ export default function LoginPage() {
         <Button type="submit" size="lg" className="w-full" loading={loading}>
           Masuk
         </Button>
-        <p className="text-center text-[13px] text-muted">Lupa password? Minta link atur ulang password ke admin.</p>
+        {features.data?.email ? (
+          <p className="text-center text-[13px]">
+            <Link to="/lupa-password" state={{ email: email.trim() }} className="font-semibold text-violet-ink hover:underline">
+              Lupa password?
+            </Link>
+          </p>
+        ) : (
+          <p className="text-center text-[13px] text-muted">Lupa password? Minta link atur ulang password ke admin.</p>
+        )}
       </form>
     </AuthLayout>
   )

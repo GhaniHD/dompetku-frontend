@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  adminApi, announcementApi,
+  adminApi, announcementApi, authApi,
   analysisApi, budgetApi, categoryApi, debtApi, goalApi, notificationApi, profileApi,
   recurringApi, reportApi, transactionApi, transferApi, walletApi,
 } from '../api/endpoints'
@@ -8,6 +8,7 @@ import {
 const list = (v) => (Array.isArray(v) ? v : [])
 
 export const useProfile = () => useQuery({ queryKey: ['profile'], queryFn: profileApi.get })
+export const useFeatures = () => useQuery({ queryKey: ['features'], queryFn: authApi.features, staleTime: 10 * 60_000, retry: 1 })
 
 export const useWallets = (includeArchived = false) =>
   useQuery({ queryKey: ['wallets', { includeArchived }], queryFn: () => walletApi.list(includeArchived), select: list })
@@ -55,6 +56,8 @@ export const useAdminUsers = (params) =>
   useQuery({ queryKey: ['admin', 'users', params], queryFn: () => adminApi.users(params), select: list, placeholderData: (prev) => prev })
 
 export const useAdminInvites = () => useQuery({ queryKey: ['admin', 'invites'], queryFn: adminApi.invites, select: list })
+
+export const useAdminEmailStats = () => useQuery({ queryKey: ['admin', 'email-stats'], queryFn: adminApi.emailStats, refetchInterval: 60_000 })
 
 export const useAdminLogs = () => useQuery({ queryKey: ['admin', 'logs'], queryFn: adminApi.logs, select: list })
 

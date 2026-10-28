@@ -39,8 +39,8 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <AuthLayout title="Link tidak lengkap" subtitle="Minta link atur ulang password yang baru ke admin." footer={back}>
-        <span />
+      <AuthLayout title="Link tidak lengkap" subtitle="Minta link atur ulang password yang baru lewat Lupa password di halaman masuk." footer={back}>
+        <Link to="/lupa-password" className="text-sm font-semibold text-violet-ink hover:underline">Minta link baru</Link>
       </AuthLayout>
     )
   }

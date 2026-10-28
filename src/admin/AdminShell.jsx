@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Activity, KeyRound, LayoutDashboard, Link2, LogOut, Megaphone, Moon, ScrollText, ShieldCheck, Sun, UserCheck, Users } from 'lucide-react'
+import { Activity, KeyRound, LayoutDashboard, Link2, LogOut, Mail, Megaphone, Moon, ScrollText, ShieldCheck, Sun, UserCheck, Users } from 'lucide-react'
 import { logoutNotice } from '../api/client'
 import Logo from '../components/layout/Logo'
 import NotificationBell from '../components/layout/NotificationBell'
@@ -16,6 +16,7 @@ const NAV = [
   { to: '/admin/aktivitas', label: 'Aktivitas login', icon: Activity },
   { to: '/admin/undangan', label: 'Undangan', icon: Link2 },
   { to: '/admin/pengumuman', label: 'Pengumuman', icon: Megaphone },
+  { to: '/admin/email', label: 'Email', icon: Mail },
   { to: '/admin/log', label: 'Log admin', icon: ScrollText },
 ]
 
