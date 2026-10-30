@@ -64,7 +64,7 @@ function CycleHero({ total, cycle, loading }) {
       </div>
 
       <div className="mt-7 flex flex-wrap gap-2">
-        <Button variant="outline"className="border-transparent bg-white text-ink hover:bg-white/90" icon={Plus} onClick={() => quick.openTransaction()}>
+        <Button variant="outline" className="border-transparent bg-white text-black hover:bg-white/90" icon={Plus} onClick={() => quick.openTransaction()}>
           Catat transaksi
         </Button>
         <Button variant="ghost" className="bg-white/15 text-white hover:bg-white/25 hover:text-white" icon={ArrowLeftRight} onClick={() => quick.openTransfer()}>
