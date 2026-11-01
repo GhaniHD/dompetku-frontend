@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy – MyFulus Backup Tool</title>
+  <meta name="description" content="Privacy policy for the personal backup tool used by MyFulus.">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --text: #1c2431;
+      --muted: #5a6577;
+      --rule: #d9dde4;
+      --link: #0f5c63;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14181f;
+        --text: #e6e9ef;
+        --muted: #9aa4b5;
+        --rule: #2a313c;
+        --link: #6cc4cc;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 1.0625rem;
+      line-height: 1.7;
+    }
+    main {
+      max-width: 38rem;
+      margin: 0 auto;
+      padding: 4rem 1.25rem 5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .updated {
+      margin: 0 0 2.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      line-height: 1.3;
+      margin: 2.5rem 0 0.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+    }
+    p, ul { margin: 0 0 1rem; }
+    ul { padding-left: 1.25rem; }
+    li { margin-bottom: 0.4rem; }
+    a { color: var(--link); text-underline-offset: 0.15em; }
+    a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+    code {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: November 1, 2026</p>
+
+    <p>This page describes how the <strong>MyFulus Backup Tool</strong> handles data. The tool is a private, single-owner utility that creates nightly backups for <a href="https://myfulus.my.id">MyFulus</a>, a personal finance application. It is not offered to the public and has no other users.</p>
+
+    <h2>What the tool does</h2>
+    <p>Every night, the tool packages the MyFulus database and uploaded files, encrypts the package on the server, and uploads the encrypted file to the owner’s own Google Drive. Older backups are deleted automatically after a fixed retention period.</p>
+
+    <h2>Access to Google data</h2>
+    <p>The tool asks for one Google permission: the <code>drive.file</code> scope. With this scope, the tool can only see and manage files and folders that it created itself. It cannot read, list, or change any other file in the Google Drive account.</p>
+
+    <h2>Data we collect and store</h2>
+    <ul>
+      <li>The tool does not collect personal data from visitors or from any other person.</li>
+      <li>It stores only an authorization token for the owner’s Google account, kept in a configuration file on the owner’s private server.</li>
+      <li>The backup files contain MyFulus application data. They are encrypted before they leave the server, and only the owner holds the key to open them.</li>
+    </ul>
+
+    <h2>Sharing and selling</h2>
+    <p>Data accessed through the Google API is never shared with third parties, sold, used for advertising, or used to train any model. It is used only to store and delete the encrypted backup files described above.</p>
+
+    <h2>Google API Services User Data Policy</h2>
+    <p>The tool’s use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+    <h2>Retention and revoking access</h2>
+    <p>Backups are kept for a limited time and then deleted automatically. The owner can revoke the tool’s access at any time from the Google Account permissions page at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Revoking access stops all further uploads.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes, the updated version will be posted on this page with a new date.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy can be sent to <a href="mailto:xeonslucheon@gmail.com">xeonslucheon@gmail.com</a>.</p>
+
+    <footer>
+      Part of the MyFulus project · <a href="https://myfulus.my.id">myfulus.my.id</a>
+    </footer>
+  </main>
+</body>
+</html>
