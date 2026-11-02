@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_URL = (import.meta.env.VITE_API_URL || 'https://dompetku-backend.onrender.com/api').replace(/\/$/, '')
+export const API_URL = (import.meta.env.VITE_API_URL || 'https://api.myfulus.my.id/api').replace(/\/$/, '')
 export const SERVER_URL = API_URL.replace(/\/api$/, '')
 
 const TOKEN_KEY = 'token'
